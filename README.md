@@ -1,7 +1,7 @@
 # GitHub Bitcoin Explorer Bot for Telegram
 
-This bot provides an easy way to explore the Bitcoin blockchain. It allows users to search and view transactions, blocks, and addresses on the Bitcoin network. 
+Этот бот предоставляет простой способ изучить блокчейн биткоина. Это позволяет пользователям искать и просматривать транзакции, блоки и адреса в сети Биткойн.
 
-To use this bot, simply open a chat with it in Telegram. The bot will respond with all relevant information about the query you entered. 
+Чтобы использовать этого бота, просто откройте с ним чат в Telegram. Бот ответит со всей соответствующей информацией о введенном вами запросе.
 
-We hope you find this tool useful for exploring the Bitcoin blockchain! If you have any questions or feedback please feel free to contact us at Telegram: @httpshotmaker
+Мы надеемся, что вы найдете этот инструмент полезным для изучения блокчейна Биткоина! Если у вас есть какие-либо вопросы или обратная связь, пожалуйста, не стесняйтесь обращаться к нам в Telegram: @httpshotmaker
