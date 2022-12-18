@@ -72,7 +72,6 @@ body{
 
 	border-radius: 0 0 10px 10px;
 	text-decoration: none;
-	margin-left: 0;
 }
 
 .wave-btn:hover {
@@ -237,6 +236,7 @@ body{
     padding-right: 15px;
     padding-left: 15px;
     margin: 0 auto;
+    margin-bottom: 50px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -250,7 +250,7 @@ body{
     color: var(--white);
     background-color: var(--blue);
     margin-top: 50px;
-    margin-left: 70px;
+    margin-left: 150px;
     padding: 68px;
     border-radius: 32px;
     font-weight: 500;
@@ -323,11 +323,23 @@ body{
 	color: white;
 	font-family: 'Montserrat', sans-serif;
 }
-@media screen and (max-width: 1278px){
-	.name{
-		margin-left: 150px;
+@media screen and (max-width: 1024px){
+	.logo{
+		margin-left: 15px;
+		width: 99px;
+		height: 96px;
 	}
-}
+	.name{
+		display:flex;
+		flex-wrap: nowrap;
+		justify-content: space-between;
+		position: absolute;
+		margin-left: 200px;
+		margin-top: -28px;
+		font-size: 30px;
+		font-family: 'Montserrat', sans-serif;
+		color: white;
+	}
 @media screen and (max-width: 500px){
 	.inline {
 		margin-left: 45px;
@@ -339,31 +351,6 @@ body{
 	}
 	.name{
 		margin-left: 150px
-	}
-}
-@media screen and (max-width: 300px){
-	.wave-btn{
-		margin-left: 20px;
-		width: 195px;
-    	height: 45px;
-    	font-size: 12px;
-	}
-	.name{
-		margin-left: 80px
-	}
-	.ddcrypto{
-		font-size: 20px;
-	}
-	.logo{
-		margin-top: -20px;
-		margin-left: 10px;
-		width: 60px;
-    	height: 60px;
-	}
-	.inline {
-		width: 200px;
-		height: 150px;
-		font-size: 8px;
 	}
 }
 		</style>
@@ -386,74 +373,16 @@ body{
 
 
     	</header>
-		<!-- Оболочка для демонстрации -->
-		<div class="wrapper">
-			<!-- Контент -->
-			<a href="https://so.urceco.de/selif/gxe1toi2.txt" class="wave-btn">
-				<span class="wave-btn__text">Cкачать</span>
-				<span class="wave-btn__waves"></span>
-			</a>
-		</div>
 		<div class="inline">
 			<p class="number_trans">Транзакция 1</p>
-			<p class="persona_info">Потрачено ли: Нет</p>
-			<p class="persona_info">Кому: <a href="https://www.blockchain.com/explorer/addresses/btc/15MdAHnkxt9TMC2Rj595hsg8Hnv693pPBB">15MdAHnkxt9TMC2Rj595hsg8Hnv693pPBB</a></p>
-			<p class="persona_info">Сумма: 6.26405588 BTC (6818503.06 RUB)
-</p>
+			<p class="persona_info">Потрачено ли: spent1</p>
+			<p class="persona_info">Кому: receiver1</p>
+			<p class="persona_info">Сумма: sums1</p>
 		</div>
 		<div class="inline"><p class="number_trans">Транзакция 2</p>
-			<div class="persona_info">Потрачено ли: Нет</div>
-			<div class="persona_info">Кому: <a href="https://www.blockchain.com/explorer/addresses/btc/3B8utmMrZXCbFeHuTj16SHJWro8wzdykiY">3B8utmMrZXCbFeHuTj16SHJWro8wzdykiY</a></div>
-			<div class="persona_info">Сумма: 0.01829606 BTC (19915.49 RUB)
-</div>
-		</div>
-		<div class="inline"><p class="number_trans">Транзакция 3</p>
-			<div class="persona_info">Потрачено ли: Да</div>
-			<div class="persona_info">Кому: <a href="https://www.blockchain.com/explorer/addresses/btc/3DcUhXuJSTqzokmypxU8Z4SXQQKt9oXt5h">3DcUhXuJSTqzokmypxU8Z4SXQQKt9oXt5h</a></div>
-			<div class="persona_info">Сумма: 0.00131535 BTC (1431.77 RUB)
-</div>
-		</div>
-		<div class="inline"><p class="number_trans">Транзакция 4</p>
-			<div class="persona_info">Потрачено ли: Нет</div>
-			<div class="persona_info">Кому: <a href="https://www.blockchain.com/explorer/addresses/btc/bc1qz8gcjl28r8huzlzmdgl5yjfm2v9vwzyd8y2jjk">bc1qz8gcjl28r8huzlzmdgl5yjfm2v9vwzyd8y2jjk</a></div>
-			<div class="persona_info">Сумма: 0.3994 BTC (434751.89 RUB)
-</div>
-		</div>
-		<div class="inline"><p class="number_trans">Транзакция 5</p>
-			<div class="persona_info">Потрачено ли: Да</div>
-			<div class="persona_info">Кому: <a href="https://www.blockchain.com/explorer/addresses/btc/3Mp4GQpX6kMzviVgkGbGfx7taDDtH3Nrfa">3Mp4GQpX6kMzviVgkGbGfx7taDDtH3Nrfa</a></div>
-			<div class="persona_info">Сумма: 0.01330322 BTC (14480.72 RUB)
-</div>
-		</div>
-		<div class="inline"><p class="number_trans">Транзакция 6</p>
-			<div class="persona_info">Потрачено ли: Нет</div>
-			<div class="persona_info">Кому: <a href="https://www.blockchain.com/explorer/addresses/btc/397nXAJvv477V94DZSQSnHVR9do93ibTVP">397nXAJvv477V94DZSQSnHVR9do93ibTVP</a></div>
-			<div class="persona_info">Сумма: 5.5e-05 BTC (59.87 RUB)
-</div>
-		</div>
-		<div class="inline"><p class="number_trans">Транзакция 7</p>
-			<div class="persona_info">Потрачено ли: Нет</div>
-			<div class="persona_info">Кому: <a href="https://www.blockchain.com/explorer/addresses/btc/397nXAJvv477V94DZSQSnHVR9do93ibTVP">397nXAJvv477V94DZSQSnHVR9do93ibTVP</a></div>
-			<div class="persona_info">Сумма: 5.5e-05 BTC (59.87 RUB)
-</div>
-		</div>
-		<div class="inline"><p class="number_trans">Транзакция 8</p>
-			<div class="persona_info">Потрачено ли: Нет</div>
-			<div class="persona_info">Кому: <a href="https://www.blockchain.com/explorer/addresses/btc/3FKNN1uXXmepnDir1RnVmaxoWH1EG1tWFN">3FKNN1uXXmepnDir1RnVmaxoWH1EG1tWFN</a></div>
-			<div class="persona_info">Сумма: 0.09717203 BTC (105772.97 RUB)
-</div>
-		</div>
-		<div class="inline"><p class="number_trans">Транзакция 9</p>
-			<div class="persona_info">Потрачено ли: Нет</div>
-			<div class="persona_info">Кому: <a href="https://www.blockchain.com/explorer/addresses/btc/bc1q745ll9awjk0hqguaj2c4wmrukfwvx4cnkp2d4f">bc1q745ll9awjk0hqguaj2c4wmrukfwvx4cnkp2d4f</a></div>
-			<div class="persona_info">Сумма: 0.024353 BTC (26508.54 RUB)
-</div>
-		</div>
-		<div class="inline"><p class="number_trans">Транзакция 10</p>
-			<div class="persona_info">Потрачено ли: Нет0</div>
-			<div class="persona_info">Кому: <a href="https://www.blockchain.com/explorer/addresses/btc/15MdAHnkxt9TMC2Rj595hsg8Hnv693pPBB">15MdAHnkxt9TMC2Rj595hsg8Hnv693pPBB</a>0</div>
-			<div class="persona_info">Сумма: 6.26405588 BTC (6818503.06 RUB)
-0</div>
+			<div class="persona_info">Потрачено ли: spent2</div>
+			<div class="persona_info">Кому: receiver2</div>
+			<div class="persona_info">Сумма: sums2</div>
 		</div>
 		<script src="https://app.embed.im/snow.js" defer></script>
 	</body>
