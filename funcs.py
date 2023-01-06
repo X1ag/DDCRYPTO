@@ -5,16 +5,17 @@ import asyncio
 
 async def cryptocurrency_exchange_rate():
     # курс крипты
+    global r
     r = requests.get('https://www.blockchain.com/ru/ticker').json()
+    return f"💰 <b>Покупка</b>: <code>{r['RUB']['buy']} {r['RUB']['symbol']}</code>\n💸 <b>Продажа</b>: <code>{r['RUB']['sell']} {r['RUB']['symbol']}</code>"
 
-    print(f"Покупка: {r['RUB']['buy']} {r['RUB']['symbol']}\nПродажа: {r['RUB']['sell']} {r['RUB']['symbol']}")
-    yield f"Покупка: {r['RUB']['buy']} {r['RUB']['symbol']}\nПродажа: {r['RUB']['sell']} {r['RUB']['symbol']}"
 
 # -----------------------------------------------------------
 
 
 async def last_block():
     # последний блок
+    global block_info, date_str, msk
     last_block = requests.get(url=f'https://api.bitaps.com/btc/v1/blockchain/block/last').json()
     block = last_block['data']['hash']
     block_info = get_block_overview(block)
@@ -25,9 +26,6 @@ async def last_block():
     msk = msk.split(' ')[1].split(':')[0]
     msk = int(msk)
     msk += 3
-
-    print(
-        f'Хеш блока: {block_info["hash"]}\nВысота: {block_info["height"]}\nСеть: {block_info["chain"]}\nNonce: {block_info["nonce"]}\nКем создан: {block_info["relayed_by"]}\nБиты: {block_info["bits"]}\nВремя: {date_str.split(" ")[0]} {msk}:{date_str.split(":")[1]}')
 
     txs_10_ident = 1
     with open(f'transactions.txt', 'w', encoding='utf-8') as tx_full:
@@ -60,7 +58,8 @@ async def last_block():
                     f'Хеш: {tx["hash"]}\nСумма: {sums} BTC ({sum_rub} RUB)\nПотрачены ли: {spent}\nКому: https://www.blockchain.com/explorer/addresses/btc/{receiver}\n\n')
                 if txs_10_ident <= 10:
                     # Первые 10 транзакций
-                    txs_10.write(f'{spent}|1|<a href="https://www.blockchain.com/explorer/addresses/btc/{receiver}">{receiver}</a>|2|{sums} BTC ({sum_rub} RUB)\n')
+                    txs_10.write(
+                        f'{spent}|1|<a href="https://www.blockchain.com/explorer/addresses/btc/{receiver}">{receiver}</a>|2|{sums} BTC ({sum_rub} RUB)\n')
                     txs_10_ident += 1
 
     # загрузить файл с транзакциями
@@ -150,13 +149,15 @@ async def last_block():
     with open(f'transactions.html', 'w', encoding='cp1251') as txs_report:
         txs_report.write(str(done))
 
-    yield f'Хеш блока: {block_info["hash"]}\nВысота: {block_info["height"]}\nСеть: {block_info["chain"]}\nNonce: {block_info["nonce"]}\nКем создан: {block_info["relayed_by"]}\nБиты: {block_info["bits"]}\nВремя: {date_str.split(" ")[0]} {msk}:{date_str.split(":")[1]}'
+    return f'🔢 <b>Хеш блока</b>: <code>{block_info["hash"]}</code>\n📈 <b>Высота</b>: <code>{block_info["height"]}</code>\n🌍 <b>Сеть</b>: <code>{block_info["chain"]}</code>\n🔢 <b>Nonce</b>: <code>{block_info["nonce"]}</code>\n📡 <b>Кем создан</b>: <code>{block_info["relayed_by"]}</code>\n⛓️ <b>Биты</b>: <code>{block_info["bits"]}</code>\n🕰️ <b>Время</b>: <code>{date_str.split(" ")[0]} {msk}:{date_str.split(":")[1]}</code>'
+
 
 # -----------------------------------------------------------
 
 
 async def block_by_number(block_id):
     # блоки
+    global block_info, date_str, msk
     b = requests.get(url=f'https://api.bitaps.com/btc/v1/blockchain/block/{block_id}').json()
     block_hash = b['data']['hash']
     block_info = get_block_overview(block_hash)
@@ -167,9 +168,6 @@ async def block_by_number(block_id):
     msk = msk.split(' ')[1].split(':')[0]
     msk = int(msk)
     msk += 3
-
-    print(
-        f'Хеш блока: {block_info["hash"]}\nВысота: {block_info["height"]}\nСеть: {block_info["chain"]}\nNonce: {block_info["nonce"]}\nКем создан: {block_info["relayed_by"]}\nБиты: {block_info["bits"]}\nВремя: {date_str.split(" ")[0]} {msk}:{date_str.split(":")[1]}')
 
     txs_10_ident = 1
     with open(f'transactions.txt', 'w', encoding='utf-8') as tx_full:
@@ -202,7 +200,8 @@ async def block_by_number(block_id):
                     f'Хеш: {tx["hash"]}\nСумма: {sums} BTC ({sum_rub} RUB)\nПотрачены ли: {spent}\nКому: https://www.blockchain.com/explorer/addresses/btc/{receiver}\n\n')
                 if txs_10_ident <= 10:
                     # Первые 10 транзакций
-                    txs_10.write(f'{spent}|1|<a href="https://www.blockchain.com/explorer/addresses/btc/{receiver}">{receiver}</a>|2|{sums} BTC ({sum_rub} RUB)\n')
+                    txs_10.write(
+                        f'{spent}|1|<a href="https://www.blockchain.com/explorer/addresses/btc/{receiver}">{receiver}</a>|2|{sums} BTC ({sum_rub} RUB)\n')
                     txs_10_ident += 1
 
     # загрузить файл с транзакциями
@@ -732,13 +731,15 @@ async def block_by_number(block_id):
         with open(f'transactions.html', 'w', encoding='cp1251') as txs_report:
             txs_report.write(str(sums1))
 
-    yield f'Хеш блока: {block_info["hash"]}\nВысота: {block_info["height"]}\nСеть: {block_info["chain"]}\nNonce: {block_info["nonce"]}\nКем создан: {block_info["relayed_by"]}\nБиты: {block_info["bits"]}\nВремя: {date_str.split(" ")[0]} {msk}:{date_str.split(":")[1]}'
+    return f'🔢 <b>Хеш блока</b>: <code>{block_info["hash"]}</code>\n📈 <b>Высота</b>: <code>{block_info["height"]}</code>\n🌍 <b>Сеть</b>: <code>{block_info["chain"]}</code>\n🔢 <b>Nonce</b>: <code>{block_info["nonce"]}</code>\n📡 <b>Кем создан</b>: <code>{block_info["relayed_by"]}</code>\n⛓️ <b>Биты</b>: <code>{block_info["bits"]}</code>\n🕰️ <b>Время</b>: <code>{date_str.split(" ")[0]} {msk}:{date_str.split(":")[1]}</code>'
+
 
 # -----------------------------------------------------------
 
 
 async def btc_adress_balance(addr):
     # баланс кошелька
+    global one_btc_balance
 
     one_btc_balance = requests.get(f'https://blockchain.info/rawaddr/{addr}').json()
 
@@ -760,9 +761,8 @@ async def btc_adress_balance(addr):
     r = requests.get('https://www.blockchain.com/ru/ticker').json()
     final_balance_rub = final_balance * r['RUB']['buy']
 
-    print(
-        f'Хеш-160: {one_btc_balance["hash160"]}\nАдрес: {hidden_addr}\nВсего получено: {total_received} BTC ({total_received_rub} RUB)\nВсего отправлено: {total_sent} BTC ({total_sent_rub} RUB)\nИтоговый баланс: {final_balance} BTC ({final_balance_rub} RUB)')
-    yield f'Хеш-160: {one_btc_balance["hash160"]}\nАдрес: {hidden_addr}\nВсего получено: {total_received} BTC ({total_received_rub} RUB)\nВсего отправлено: {total_sent} BTC ({total_sent_rub} RUB)\nИтоговый баланс: {final_balance} BTC ({final_balance_rub} RUB)'
+    return f'🔒 <b>Хеш-160</b>: <code>{one_btc_balance["hash160"]}</code>\n💰 <b>Адрес</b>: <code>{hidden_addr}</code>\n💸 <b>Всего получено</b>: <code>{total_received} BTC ({total_received_rub} RUB</code>)\n💸 <b>Всего отправлено</b>: <code>{total_sent} BTC ({total_sent_rub} RUB)</code>\n💰 <b>Итоговый баланс</b>: <code>{final_balance} BTC ({final_balance_rub} RUB)</code>'
+
 
 # -----------------------------------------------------------
 
@@ -770,8 +770,12 @@ async def btc_adress_balance(addr):
 
 if __name__ == '__main__':
     asyncio.run(cryptocurrency_exchange_rate())
+    print(f"Покупка: {r['RUB']['buy']} {r['RUB']['symbol']}\nПродажа: {r['RUB']['sell']} {r['RUB']['symbol']}")
     asyncio.run(last_block())
+    print(f'Хеш блока: {block_info["hash"]}\nВысота: {block_info["height"]}\nСеть: {block_info["chain"]}\nNonce: {block_info["nonce"]}\nКем создан: {block_info["relayed_by"]}\nБиты: {block_info["bits"]}\nВремя: {date_str.split(" ")[0]} {msk}:{date_str.split(":")[1]}')
     block_id = input('Введите Block ID: ')
     asyncio.run(block_by_number(block_id))
+    print(f'Хеш блока: {block_info["hash"]}\nВысота: {block_info["height"]}\nСеть: {block_info["chain"]}\nNonce: {block_info["nonce"]}\nКем создан: {block_info["relayed_by"]}\nБиты: {block_info["bits"]}\nВремя: {date_str.split(" ")[0]} {msk}:{date_str.split(":")[1]}')
     addr = input('Введите BTC адрес: ')
     asyncio.run(btc_adress_balance(addr))
+    print(f'Хеш-160: {one_btc_balance["hash160"]}\nАдрес: {hidden_addr}\nВсего получено: {total_received} BTC ({total_received_rub} RUB)\nВсего отправлено: {total_sent} BTC ({total_sent_rub} RUB)\nИтоговый баланс: {final_balance} BTC ({final_balance_rub} RUB)')

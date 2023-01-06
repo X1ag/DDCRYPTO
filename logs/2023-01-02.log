@@ -1,0 +1,52 @@
+2023-01-02 11:38:19.456 | DEBUG    | __main__:last_block_handler:47 - Введена команда /last пользователем. Имя: httpshotmaker ЧЕК БИО ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-01-02 12:09:10.452 | DEBUG    | __main__:<module>:33 - Бот был запущен
+2023-01-02 12:09:16.281 | INFO     | __main__:last_block_handler:57 - Введена команда /last пользователем. Имя: httpshotmaker ЧЕК БИО ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-01-02 12:10:35.465 | INFO     | __main__:block_handler:91 - Введена команда /block пользователем. Имя: httpshotmaker ЧЕК БИО ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-01-02 12:14:23.524 | DEBUG    | __main__:<module>:33 - Бот был запущен
+2023-01-02 12:15:25.250 | DEBUG    | __main__:<module>:33 - Бот был запущен
+2023-01-02 12:15:30.644 | INFO     | __main__:block_handler:92 - Введена команда /block пользователем. Имя: httpshotmaker ЧЕК БИО ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-01-02 12:16:02.343 | INFO     | __main__:block_handler:92 - Введена команда /block пользователем. Имя: httpshotmaker ЧЕК БИО ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-01-02 12:16:27.223 | DEBUG    | __main__:<module>:33 - Бот был запущен
+2023-01-02 12:16:32.177 | INFO     | __main__:block_handler:92 - Введена команда /block пользователем. Имя: httpshotmaker ЧЕК БИО ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-01-02 12:18:50.757 | DEBUG    | __main__:<module>:33 - Бот был запущен
+2023-01-02 12:18:57.031 | INFO     | __main__:block_handler:92 - Введена команда /block пользователем. Имя: httpshotmaker ЧЕК БИО ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-01-02 12:20:34.144 | DEBUG    | __main__:<module>:33 - Бот был запущен
+2023-01-02 12:21:28.033 | INFO     | __main__:balance_handler:114 - Введена команда /balance пользователем. Имя: httpshotmaker ЧЕК БИО ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-01-02 12:26:10.201 | DEBUG    | __main__:<module>:33 - Бот был запущен
+2023-01-02 12:26:33.911 | INFO     | __main__:balance_handler:114 - Введена команда /balance пользователем. Имя: httpshotmaker ЧЕК БИО ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-01-02 12:31:27.236 | INFO     | __main__:start_handler:43 - Введена команда /start пользователем. Имя: httpshotmaker ЧЕК БИО ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-01-02 12:32:20.855 | INFO     | __main__:block_handler:92 - Введена команда /block пользователем. Имя: httpshotmaker ЧЕК БИО ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-01-02 12:38:02.120 | DEBUG    | __main__:<module>:33 - Бот был запущен
+2023-01-02 12:38:11.411 | INFO     | __main__:block_handler:92 - Введена команда /block пользователем. Имя: httpshotmaker ЧЕК БИО ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-01-02 12:49:11.850 | DEBUG    | __main__:<module>:34 - Бот был запущен
+2023-01-02 12:49:30.684 | DEBUG    | __main__:<module>:33 - Бот был запущен
+2023-01-02 12:49:37.250 | INFO     | __main__:block_handler:92 - Введена команда /block пользователем. Имя: httpshotmaker ЧЕК БИО ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-01-02 12:50:05.207 | DEBUG    | __main__:<module>:33 - Бот был запущен
+2023-01-02 12:50:07.685 | INFO     | __main__:block_handler:92 - Введена команда /block пользователем. Имя: httpshotmaker ЧЕК БИО ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-01-02 18:58:14.341 | DEBUG    | __main__:<module>:33 - Бот был запущен
+2023-01-02 18:58:52.224 | DEBUG    | __main__:<module>:34 - Бот был запущен
+2023-01-02 18:59:49.289 | INFO     | __main__:start_handler:45 - Введена команда /start пользователем. Имя: Qq Ww, ID: 5297372014, юзернейм: FAUAKAKSBAB
+2023-01-02 19:00:06.290 | INFO     | __main__:last_block_handler:79 - Введена команда /exchange пользователем. Имя: Qq Ww, ID: 5297372014, юзернейм: FAUAKAKSBAB
+2023-01-02 19:00:19.162 | INFO     | __main__:last_block_handler:60 - Введена команда /last пользователем. Имя: Qq Ww, ID: 5297372014, юзернейм: FAUAKAKSBAB
+2023-01-02 19:00:28.779 | INFO     | __main__:balance_handler:134 - Введена команда /balance пользователем. Имя: Qq Ww, ID: 5297372014, юзернейм: FAUAKAKSBAB
+2023-01-02 19:00:50.321 | INFO     | __main__:block_handler:97 - Введена команда /block пользователем. Имя: Qq Ww, ID: 5297372014, юзернейм: FAUAKAKSBAB
+2023-01-02 19:01:07.497 | INFO     | __main__:block_handler:97 - Введена команда /block пользователем. Имя: httpshotmaker ЧЕК БИО ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-01-02 19:01:22.905 | INFO     | __main__:start_handler:45 - Введена команда /start пользователем. Имя: Qq Ww, ID: 5297372014, юзернейм: FAUAKAKSBAB
+2023-01-02 19:01:33.868 | INFO     | __main__:start_handler:45 - Введена команда /start пользователем. Имя: Qq Ww, ID: 5297372014, юзернейм: FAUAKAKSBAB
+2023-01-02 19:01:35.367 | INFO     | __main__:start_handler:45 - Введена команда /start пользователем. Имя: Qq Ww, ID: 5297372014, юзернейм: FAUAKAKSBAB
+2023-01-02 19:01:36.577 | INFO     | __main__:start_handler:45 - Введена команда /start пользователем. Имя: Qq Ww, ID: 5297372014, юзернейм: FAUAKAKSBAB
+2023-01-02 19:01:37.830 | INFO     | __main__:start_handler:45 - Введена команда /start пользователем. Имя: Qq Ww, ID: 5297372014, юзернейм: FAUAKAKSBAB
+2023-01-02 19:01:39.081 | INFO     | __main__:start_handler:45 - Введена команда /start пользователем. Имя: Qq Ww, ID: 5297372014, юзернейм: FAUAKAKSBAB
+2023-01-02 19:01:41.056 | INFO     | __main__:start_handler:45 - Введена команда /start пользователем. Имя: Qq Ww, ID: 5297372014, юзернейм: FAUAKAKSBAB
+2023-01-02 19:01:42.329 | INFO     | __main__:start_handler:45 - Введена команда /start пользователем. Имя: Qq Ww, ID: 5297372014, юзернейм: FAUAKAKSBAB
+2023-01-02 19:01:44.074 | INFO     | __main__:start_handler:45 - Введена команда /start пользователем. Имя: Qq Ww, ID: 5297372014, юзернейм: FAUAKAKSBAB
+2023-01-02 19:01:45.462 | INFO     | __main__:start_handler:45 - Введена команда /start пользователем. Имя: Qq Ww, ID: 5297372014, юзернейм: FAUAKAKSBAB
+2023-01-02 19:02:23.994 | INFO     | __main__:start_handler:45 - Введена команда /start пользователем. Имя: Qq Ww, ID: 5297372014, юзернейм: FAUAKAKSBAB
+2023-01-02 19:02:24.271 | INFO     | __main__:start_handler:45 - Введена команда /start пользователем. Имя: Qq Ww, ID: 5297372014, юзернейм: FAUAKAKSBAB
+2023-01-02 19:02:24.273 | INFO     | __main__:start_handler:45 - Введена команда /start пользователем. Имя: Qq Ww, ID: 5297372014, юзернейм: FAUAKAKSBAB
+2023-01-02 19:02:24.548 | INFO     | __main__:last_block_handler:79 - Введена команда /exchange пользователем. Имя: Qq Ww, ID: 5297372014, юзернейм: FAUAKAKSBAB
+2023-01-02 19:02:42.070 | INFO     | __main__:balance_handler:134 - Введена команда /balance пользователем. Имя: Qq Ww, ID: 5297372014, юзернейм: FAUAKAKSBAB
+2023-01-02 19:02:57.189 | INFO     | __main__:balance_handler:134 - Введена команда /balance пользователем. Имя: Qq Ww, ID: 5297372014, юзернейм: FAUAKAKSBAB
+2023-01-02 19:03:56.697 | INFO     | __main__:balance_handler:134 - Введена команда /balance пользователем. Имя: Qq Ww, ID: 5297372014, юзернейм: FAUAKAKSBAB
+2023-01-02 19:05:02.340 | INFO     | __main__:last_block_handler:60 - Введена команда /last пользователем. Имя: Qq Ww, ID: 5297372014, юзернейм: FAUAKAKSBAB
+2023-01-02 19:05:10.112 | INFO     | __main__:start_handler:45 - Введена команда /start пользователем. Имя: Qq Ww, ID: 5297372014, юзернейм: FAUAKAKSBAB
