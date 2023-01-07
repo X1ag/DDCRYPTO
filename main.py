@@ -34,11 +34,10 @@ loguru.logger.add(
 
 # Инициализация бота и диспетчера
 bot = Bot(token=API_TOKEN)
-dispatcher = Dispatcher(bot)
+storage = MemoryStorage()
+dispatcher = Dispatcher(bot, storage=storage)
 loguru.logger.debug('Бот был запущен')
 
-storage = MemoryStorage()
-dp = Dispatcher(bot, storage=storage)
 
 
 class Form(StatesGroup):
@@ -116,8 +115,8 @@ async def block_handler(message: types.Message, state: FSMContext):
         await message.reply("Введите идентификатор блока:")
 
 
-@dp.message_handler(state=Form.block_id)
-async def process_name(message: types.Message, state: FSMContext):
+@dispatcher.message_handler(state=Form.block_id)
+async def process_block_id(message: types.Message, state: FSMContext):
     """
     Process block_id
     """
