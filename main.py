@@ -1,10 +1,11 @@
 from aiogram import Bot, Dispatcher, types
 from aiogram.utils import executor
-from aiogram.types import Document, Message, CallbackQuery
+from aiogram.types import Document, Message, CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from aiogram.dispatcher.filters import Filter
 import loguru
 import sys
 from funcs import *
@@ -32,6 +33,15 @@ loguru.logger.add(
     level="DEBUG"
 )
 
+
+class CallbackDataFilter(Filter):
+    def __init__(self, data: str):
+        self.data = data
+
+    async def check(self, callback_query: CallbackQuery):
+        return callback_query.data == self.data
+
+
 # Инициализация бота и диспетчера
 bot = Bot(token=API_TOKEN)
 storage = MemoryStorage()
@@ -42,6 +52,27 @@ loguru.logger.debug('Бот был запущен')
 class Form(StatesGroup):
     block_id = State()
     addr = State()
+
+
+inline_keyboard = InlineKeyboardMarkup()
+
+button_last = InlineKeyboardButton('🔍 Последний блок', callback_data='last')
+button_exchange = InlineKeyboardButton('💰 Курс Биткоина', callback_data='exchange')
+button_block = InlineKeyboardButton('🔗 Информация о блоке', callback_data='block')
+button_balance = InlineKeyboardButton('💼 Биткоин кошелек', callback_data='balance')
+inline_keyboard.add(button_last)
+inline_keyboard.add(button_exchange)
+inline_keyboard.add(button_block)
+inline_keyboard.add(button_balance)
+
+menu = '''
+🔥 <b>Меню:</b>
+
+💰 <b>Курс Биткоина:</b> Получите актуальный курс Биткоина на Blockchain
+🔍 <b>Последний блок:</b> Получите информацию о последнем блоке в сети Биткоин, включая транзакции
+💼 <b>Биткоин кошелек:</b> Получите информацию о вашем Биткоин кошельке, включая баланс, общую сумму поступлений и выводов
+🔗 <b>Информация о блоке:</b> Получите информацию о конкретном блоке по его номеру
+'''
 
 
 @logger.catch
@@ -56,7 +87,7 @@ async def start_handler(message: types.Message):
     await bot.send_sticker(chat_id=chat_id,
                            sticker='CAACAgIAAxkBAAEHEwFjrv_qyP2xoFchsY9jGJEgHqSthAACDgADDkfHKNYTYJGwbH6ZLQQ')
     await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
-    await bot.send_message(chat_id=chat_id, text=f'Добро пожаловать, {full_name}', parse_mode='HTML')
+    await bot.send_message(chat_id=chat_id, text=menu, parse_mode='HTML', reply_markup=inline_keyboard)
 
 
 @logger.catch
@@ -80,7 +111,7 @@ async def last_block_handler(message: types.Message):
 
 @logger.catch
 @dispatcher.message_handler(commands='exchange')
-async def last_block_handler(message: types.Message):
+async def exchange_handler(message: types.Message):
     """Хэндлер команды /exchange"""
     chat_id = message.chat.id
     user_id = message.from_user.id
@@ -97,7 +128,7 @@ async def last_block_handler(message: types.Message):
 
 @logger.catch
 @dispatcher.message_handler(commands='block')
-async def block_handler(message: types.Message, state: FSMContext):
+async def block_handler(state: FSMContext):
     """Хэндлер команды /block"""
     chat_id = message.chat.id
     user_id = message.from_user.id
@@ -129,7 +160,7 @@ async def block_handler(message: types.Message, state: FSMContext):
 
 
 @dispatcher.message_handler(state=Form.block_id)
-async def process_block_id(message: types.Message, state: FSMContext):
+async def process_block_id(state: FSMContext):
     """
     Process block_id
     """
@@ -196,7 +227,7 @@ async def balance_handler(message: types.Message):
 
 
 @dispatcher.message_handler(state=Form.addr)
-async def process_addr(message: types.Message, state: FSMContext):
+async def process_addr(state: FSMContext):
     """
     Process address
     """
@@ -222,13 +253,84 @@ async def process_addr(message: types.Message, state: FSMContext):
 @logger.catch
 @dispatcher.message_handler(state='*', commands='cancel')
 @dispatcher.message_handler(Text(equals='отмена', ignore_case=True), state='*')
-async def cancel_handler(message: types.Message, state: FSMContext):
+async def cancel_handler(state: FSMContext):
     current_state = await state.get_state()
     if current_state is None:
         return
 
     await state.finish()
     await message.reply('Отменено')
+
+
+@dispatcher.callback_query_handler(CallbackDataFilter(data='last'))
+async def process_callback_last(callback_query: CallbackQuery):
+    """Хэндлер команды /last"""
+    chat_id = callback_query.message.chat.id
+    user_id = callback_query.message.from_user.id
+    full_name = callback_query.message.from_user.full_name
+    username = callback_query.message.from_user.username
+    loguru.logger.info(f"Введена команда /last пользователем. Имя: {full_name}, ID: {user_id}, юзернейм: {username}")
+    await bot.send_sticker(chat_id=chat_id,
+                           sticker='CAACAgIAAxkBAAEHFsljsZ3YlHcbHEvkfh3zY0AWAUyS3gACFQADDkfHKN9bk18wSjcfLQQ')
+    await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
+    text = f'{await last_block()}'
+    await bot.send_message(chat_id=chat_id, text=text, parse_mode='HTML')
+    await bot.send_chat_action(chat_id, types.ChatActions.UPLOAD_DOCUMENT)
+    await asyncio.sleep(1)
+    await bot.send_document(chat_id=chat_id, document=open('transactions.html', 'rb'))
+
+
+@dispatcher.callback_query_handler(CallbackDataFilter(data='exchange'))
+async def process_callback_exchange(callback_query: CallbackQuery):
+    """Хэндлер команды /exchange"""
+    chat_id = callback_query.message.chat.id
+    user_id = callback_query.message.from_user.id
+    full_name = callback_query.message.from_user.full_name
+    username = callback_query.message.from_user.username
+    loguru.logger.info(
+        f"Введена команда /exchange пользователем. Имя: {full_name}, ID: {user_id}, юзернейм: {username}")
+    await bot.send_sticker(chat_id=chat_id,
+                           sticker='CAACAgIAAxkBAAEHFs1jsaDbck0XvCpkZtB9Xr-E5GIeNAACNAADDkfHKERK3MnaPtY3LQQ')
+    await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
+    text = f'{await cryptocurrency_exchange_rate()}'
+    await bot.send_message(chat_id=chat_id, text=text, parse_mode='HTML')
+
+
+@dispatcher.callback_query_handler(CallbackDataFilter(data='block'))
+async def process_callback_block(callback_query: CallbackQuery):
+    chat_id = callback_query.message.chat.id
+    user_id = callback_query.message.from_user.id
+    full_name = callback_query.message.from_user.full_name
+    username = callback_query.message.from_user.username
+    msg_id = callback_query.message.message_id
+    loguru.logger.info(f"Введена команда /block пользователем. Имя: {full_name}, ID: {user_id}, юзернейм: {username}")
+    global msgg_id, stick_id, stickwel_id
+    stick_id = (await bot.send_sticker(chat_id=chat_id,
+                                       sticker='CAACAgIAAxkBAAEHGMtjsqhce_gdyHlJXyJhpa21aeceHAACIAADDkfHKIn3WfQkFme2LQQ')).message_id
+    await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
+    await Form.block_id.set()
+    message = await bot.send_message(callback_query.from_user.id, "Введите идентификатор блока:")
+    msgg_id = message.message_id
+
+
+@dispatcher.callback_query_handler(CallbackDataFilter(data='balance'))
+async def process_callback_block(callback_query: CallbackQuery):
+    chat_id = callback_query.message.chat.id
+    user_id = callback_query.message.from_user.id
+    full_name = callback_query.message.from_user.full_name
+    username = callback_query.message.from_user.username
+    msg_id = callback_query.message.message_id
+    global command
+    command = msg_id
+    loguru.logger.info(
+        f"Введена команда /balance пользователем. Имя: {full_name}, ID: {user_id}, юзернейм: {username}")
+    global msgg_id, stick_id
+    stick_id = (await bot.send_sticker(chat_id=chat_id,
+                                       sticker='CAACAgIAAxkBAAEHGMtjsqhce_gdyHlJXyJhpa21aeceHAACIAADDkfHKIn3WfQkFme2LQQ')).message_id
+    await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
+    await Form.addr.set()
+    message = await bot.send_message(callback_query.from_user.id, "Введите адрес кошелька:")
+    msgg_id = message.message_id
 
 
 if __name__ == '__main__':
