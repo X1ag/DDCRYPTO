@@ -65,6 +65,22 @@ inline_keyboard.add(button_exchange)
 inline_keyboard.add(button_block)
 inline_keyboard.add(button_balance)
 
+<<<<<<< HEAD
+menu_keyboard = InlineKeyboardMarkup()
+
+menu_button_text = InlineKeyboardButton('◀️ В меню', callback_data='menu')
+
+menu_keyboard.add(menu_button_text)
+
+menu_sticker = 'CAACAgIAAxkBAAEHi25j2o75xyB-m8C3s4ITgCo7JWPEmQACph8AAv0RsEpbI3U8YSp1vy4E'
+last_sticker = 'CAACAgIAAxkBAAEHi4Nj2pISiR7ub3J2ZJoFKgpZLkCFagACKCkAAtjzqErya_sR6K2N4i4E'
+exchange_sticker = 'CAACAgIAAxkBAAEHi4Vj2pI1uvDP9bz6NoJuw0kX9rz7tQAC7i4AAu6RsEpU_iAgu_9-aS4E'
+block_sticker = 'CAACAgIAAxkBAAEHi4lj2pJS89tE80V_ZHZuAc2G046hYAACGSsAAgREqErosNZKKuXTDC4E'
+balance_sticker = 'CAACAgIAAxkBAAEHi5Zj2pUrlw0OKm70CCTKPpUB9KqN9gACVyUAAsoEqUp6NgKY6HXb-S4E'
+error_sticker = 'CAACAgIAAxkBAAEHi5Fj2pUO7WE5dh8RaOOAzL-5LslsIAACkCwAAvLrqUr7GbPrm5Xk9C4E'
+
+=======
+>>>>>>> origin/main
 menu = '''
 🔥 <b>Меню:</b>
 
@@ -84,8 +100,7 @@ async def start_handler(message: types.Message):
     full_name = message.from_user.full_name
     username = message.from_user.username
     loguru.logger.info(f"Введена команда /start пользователем. Имя: {full_name}, ID: {user_id}, юзернейм: {username}")
-    await bot.send_sticker(chat_id=chat_id,
-                           sticker='CAACAgIAAxkBAAEHEwFjrv_qyP2xoFchsY9jGJEgHqSthAACDgADDkfHKNYTYJGwbH6ZLQQ')
+    await bot.send_sticker(chat_id=chat_id, sticker=menu_sticker)
     await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
     await bot.send_message(chat_id=chat_id, text=menu, parse_mode='HTML', reply_markup=inline_keyboard)
 
@@ -100,13 +115,13 @@ async def last_block_handler(message: types.Message):
     username = message.from_user.username
     loguru.logger.info(f"Введена команда /last пользователем. Имя: {full_name}, ID: {user_id}, юзернейм: {username}")
     await bot.send_sticker(chat_id=chat_id,
-                           sticker='CAACAgIAAxkBAAEHFsljsZ3YlHcbHEvkfh3zY0AWAUyS3gACFQADDkfHKN9bk18wSjcfLQQ')
+                           sticker=last_sticker)
     await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
     text = f'{await last_block()}'
     await bot.send_message(chat_id=chat_id, text=text, parse_mode='HTML')
     await bot.send_chat_action(chat_id, types.ChatActions.UPLOAD_DOCUMENT)
     await asyncio.sleep(1)
-    await bot.send_document(chat_id=chat_id, document=open('transactions.html', 'rb'))
+    await bot.send_document(chat_id=chat_id, document=open('transactions.html', 'rb'), reply_markup=menu_keyboard)
 
 
 @logger.catch
@@ -120,10 +135,10 @@ async def exchange_handler(message: types.Message):
     loguru.logger.info(
         f"Введена команда /exchange пользователем. Имя: {full_name}, ID: {user_id}, юзернейм: {username}")
     await bot.send_sticker(chat_id=chat_id,
-                           sticker='CAACAgIAAxkBAAEHFs1jsaDbck0XvCpkZtB9Xr-E5GIeNAACNAADDkfHKERK3MnaPtY3LQQ')
+                           sticker=exchange_sticker)
     await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
     text = f'{await cryptocurrency_exchange_rate()}'
-    await bot.send_message(chat_id=chat_id, text=text, parse_mode='HTML')
+    await bot.send_message(chat_id=chat_id, text=text, parse_mode='HTML', reply_markup=menu_keyboard)
 
 
 @logger.catch
@@ -141,19 +156,31 @@ async def block_handler(state: FSMContext):
         _, block_id = message.text.split()
         await bot.delete_message(chat_id=chat_id, message_id=msg_id)
         stickwel_id = (await bot.send_sticker(chat_id=chat_id,
+<<<<<<< HEAD
+                                              sticker=block_sticker)).message_id
+=======
                                               sticker='CAACAgIAAxkBAAEHFsljsZ3YlHcbHEvkfh3zY0AWAUyS3gACFQADDkfHKN9bk18wSjcfLQQ')).message_id
+>>>>>>> origin/main
         await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
         text = f'{await block_by_number(block_id)}'
         await bot.send_message(chat_id=chat_id, text=text, parse_mode='HTML')
         if text != '❌ Введен неверный ID блока!':
             await bot.send_chat_action(chat_id, types.ChatActions.UPLOAD_DOCUMENT)
             await asyncio.sleep(1)
+<<<<<<< HEAD
+            await bot.send_document(chat_id=chat_id, document=open('transactions.html', 'rb'), reply_markup=menu_keyboard)
+=======
             await bot.send_document(chat_id=chat_id, document=open('transactions.html', 'rb'))
+>>>>>>> origin/main
         else:
             await bot.delete_message(chat_id=chat_id, message_id=stickwel_id)
     except:
         stick_id = (await bot.send_sticker(chat_id=chat_id,
+<<<<<<< HEAD
+                                           sticker=block_sticker)).message_id
+=======
                                            sticker='CAACAgIAAxkBAAEHGMtjsqhce_gdyHlJXyJhpa21aeceHAACIAADDkfHKIn3WfQkFme2LQQ')).message_id
+>>>>>>> origin/main
         await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
         await Form.block_id.set()
         msgg_id = (await message.reply("Введите идентификатор блока:")).message_id
@@ -176,21 +203,32 @@ async def process_block_id(state: FSMContext):
         block_id = int(block_id)
     except ValueError:
         await bot.send_sticker(chat_id=chat_id,
-                               sticker='CAACAgIAAxkBAAEHGMljsqhF6CE389q7NkziigIfuuwtKwACKgADDkfHKFlAbD1v7-joLQQ')
+                               sticker=error_sticker)
         await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
+<<<<<<< HEAD
+=======
         await bot.send_message(chat_id=chat_id, text='Неверный ID блока!', parse_mode='HTML')
+>>>>>>> origin/main
     await bot.delete_message(chat_id=chat_id, message_id=stick_id)
     await bot.delete_message(chat_id=chat_id, message_id=msgg_id)
     await bot.delete_message(chat_id=chat_id, message_id=msg_id)
     stickwel_id = (await bot.send_sticker(chat_id=chat_id,
+<<<<<<< HEAD
+                                          sticker=block_sticker)).message_id
+=======
                                           sticker='CAACAgIAAxkBAAEHFsljsZ3YlHcbHEvkfh3zY0AWAUyS3gACFQADDkfHKN9bk18wSjcfLQQ')).message_id
+>>>>>>> origin/main
     await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
     text = f'{await block_by_number(block_id)}'
     await bot.send_message(chat_id=chat_id, text=text, parse_mode='HTML')
     if text != '❌ Введен неверный ID блока!':
         await bot.send_chat_action(chat_id, types.ChatActions.UPLOAD_DOCUMENT)
         await asyncio.sleep(1)
+<<<<<<< HEAD
+        await bot.send_document(chat_id=chat_id, document=open('transactions.html', 'rb'), reply_markup=menu_keyboard)
+=======
         await bot.send_document(chat_id=chat_id, document=open('transactions.html', 'rb'))
+>>>>>>> origin/main
     else:
         await bot.delete_message(chat_id=chat_id, message_id=stickwel_id)
 
@@ -214,6 +252,15 @@ async def balance_handler(message: types.Message):
         text = f'{await btc_adress_balance(addr)}'
         if text != '❌ Введен неверный адрес кошелька!':
             await bot.send_sticker(chat_id=chat_id,
+<<<<<<< HEAD
+                                   sticker=balance_sticker)
+        await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
+        await bot.send_message(chat_id=chat_id, text=text, parse_mode='HTML', reply_markup=menu_keyboard)
+    except:
+        global msgg_id, stick_id
+        stick_id = (await bot.send_sticker(chat_id=chat_id,
+                                           sticker=balance_sticker)).message_id
+=======
                                    sticker='CAACAgIAAxkBAAEHFstjsaCTSoIUS14J7IibcWJxvPN0egACOAADDkfHKLFQmvkn6ZxTLQQ')
         await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
         await bot.send_message(chat_id=chat_id, text=text, parse_mode='HTML')
@@ -221,13 +268,18 @@ async def balance_handler(message: types.Message):
         global msgg_id, stick_id
         stick_id = (await bot.send_sticker(chat_id=chat_id,
                                            sticker='CAACAgIAAxkBAAEHGMtjsqhce_gdyHlJXyJhpa21aeceHAACIAADDkfHKIn3WfQkFme2LQQ')).message_id
+>>>>>>> origin/main
         await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
         await Form.addr.set()
         msgg_id = (await message.reply("Введите адрес кошелька:")).message_id
 
 
 @dispatcher.message_handler(state=Form.addr)
+<<<<<<< HEAD
+async def process_addr(message: types.Message, state: FSMContext):
+=======
 async def process_addr(state: FSMContext):
+>>>>>>> origin/main
     """
     Process address
     """
@@ -244,9 +296,15 @@ async def process_addr(state: FSMContext):
     text = f'{await btc_adress_balance(addr)}'
     if text != '❌ Введен неверный адрес кошелька!':
         await bot.send_sticker(chat_id=chat_id,
+<<<<<<< HEAD
+                               sticker=balance_sticker)
+    await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
+    await bot.send_message(chat_id=chat_id, text=text, parse_mode='HTML', reply_markup=menu_keyboard)
+=======
                                sticker='CAACAgIAAxkBAAEHFstjsaCTSoIUS14J7IibcWJxvPN0egACOAADDkfHKLFQmvkn6ZxTLQQ')
     await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
     await bot.send_message(chat_id=chat_id, text=text, parse_mode='HTML')
+>>>>>>> origin/main
 
 
 # Добавляем возможность отмены, если пользователь передумал заполнять
@@ -269,15 +327,25 @@ async def process_callback_last(callback_query: CallbackQuery):
     user_id = callback_query.message.from_user.id
     full_name = callback_query.message.from_user.full_name
     username = callback_query.message.from_user.username
+<<<<<<< HEAD
+    loguru.logger.info(f"Нажата кнопка получения информации о последнем блоке")
+    await bot.send_sticker(chat_id=chat_id,
+                           sticker=last_sticker)
+=======
     loguru.logger.info(f"Введена команда /last пользователем. Имя: {full_name}, ID: {user_id}, юзернейм: {username}")
     await bot.send_sticker(chat_id=chat_id,
                            sticker='CAACAgIAAxkBAAEHFsljsZ3YlHcbHEvkfh3zY0AWAUyS3gACFQADDkfHKN9bk18wSjcfLQQ')
+>>>>>>> origin/main
     await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
     text = f'{await last_block()}'
     await bot.send_message(chat_id=chat_id, text=text, parse_mode='HTML')
     await bot.send_chat_action(chat_id, types.ChatActions.UPLOAD_DOCUMENT)
     await asyncio.sleep(1)
+<<<<<<< HEAD
+    await bot.send_document(chat_id=chat_id, document=open('transactions.html', 'rb'), reply_markup=menu_keyboard)
+=======
     await bot.send_document(chat_id=chat_id, document=open('transactions.html', 'rb'))
+>>>>>>> origin/main
 
 
 @dispatcher.callback_query_handler(CallbackDataFilter(data='exchange'))
@@ -288,12 +356,21 @@ async def process_callback_exchange(callback_query: CallbackQuery):
     full_name = callback_query.message.from_user.full_name
     username = callback_query.message.from_user.username
     loguru.logger.info(
+<<<<<<< HEAD
+        f"Нажата кнопка получения курса криптовалюты")
+    await bot.send_sticker(chat_id=chat_id,
+                           sticker=exchange_sticker)
+    await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
+    text = f'{await cryptocurrency_exchange_rate()}'
+    await bot.send_message(chat_id=chat_id, text=text, parse_mode='HTML', reply_markup=menu_keyboard)
+=======
         f"Введена команда /exchange пользователем. Имя: {full_name}, ID: {user_id}, юзернейм: {username}")
     await bot.send_sticker(chat_id=chat_id,
                            sticker='CAACAgIAAxkBAAEHFs1jsaDbck0XvCpkZtB9Xr-E5GIeNAACNAADDkfHKERK3MnaPtY3LQQ')
     await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
     text = f'{await cryptocurrency_exchange_rate()}'
     await bot.send_message(chat_id=chat_id, text=text, parse_mode='HTML')
+>>>>>>> origin/main
 
 
 @dispatcher.callback_query_handler(CallbackDataFilter(data='block'))
@@ -303,10 +380,17 @@ async def process_callback_block(callback_query: CallbackQuery):
     full_name = callback_query.message.from_user.full_name
     username = callback_query.message.from_user.username
     msg_id = callback_query.message.message_id
+<<<<<<< HEAD
+    loguru.logger.info(f"Нажата кнопка получения информации о блоке")
+    global msgg_id, stick_id, stickwel_id
+    stick_id = (await bot.send_sticker(chat_id=chat_id,
+                                       sticker=block_sticker)).message_id
+=======
     loguru.logger.info(f"Введена команда /block пользователем. Имя: {full_name}, ID: {user_id}, юзернейм: {username}")
     global msgg_id, stick_id, stickwel_id
     stick_id = (await bot.send_sticker(chat_id=chat_id,
                                        sticker='CAACAgIAAxkBAAEHGMtjsqhce_gdyHlJXyJhpa21aeceHAACIAADDkfHKIn3WfQkFme2LQQ')).message_id
+>>>>>>> origin/main
     await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
     await Form.block_id.set()
     message = await bot.send_message(callback_query.from_user.id, "Введите идентификатор блока:")
@@ -323,16 +407,37 @@ async def process_callback_block(callback_query: CallbackQuery):
     global command
     command = msg_id
     loguru.logger.info(
+<<<<<<< HEAD
+        f"Нажата кнопка получения баланса кошелька")
+    global msgg_id, stick_id
+    stick_id = (await bot.send_sticker(chat_id=chat_id,
+                                       sticker=block_sticker)).message_id
+=======
         f"Введена команда /balance пользователем. Имя: {full_name}, ID: {user_id}, юзернейм: {username}")
     global msgg_id, stick_id
     stick_id = (await bot.send_sticker(chat_id=chat_id,
                                        sticker='CAACAgIAAxkBAAEHGMtjsqhce_gdyHlJXyJhpa21aeceHAACIAADDkfHKIn3WfQkFme2LQQ')).message_id
+>>>>>>> origin/main
     await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
     await Form.addr.set()
     message = await bot.send_message(callback_query.from_user.id, "Введите адрес кошелька:")
     msgg_id = message.message_id
 
 
+<<<<<<< HEAD
+@dispatcher.callback_query_handler(CallbackDataFilter(data='menu'))
+async def process_callback_block(callback_query: CallbackQuery):
+    chat_id = callback_query.message.chat.id
+    user_id = callback_query.message.from_user.id
+    full_name = callback_query.message.from_user.full_name
+    username = callback_query.message.from_user.username
+    loguru.logger.info(f"Вызвано меню пользователем")
+    await bot.send_sticker(chat_id=chat_id, sticker=menu_sticker)
+    await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
+    await bot.send_message(chat_id=chat_id, text=menu, parse_mode='HTML', reply_markup=inline_keyboard)
+
+=======
+>>>>>>> origin/main
 if __name__ == '__main__':
     # Запуск бота
     executor.start_polling(dispatcher)
