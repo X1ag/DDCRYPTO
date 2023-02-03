@@ -1,5 +1,5 @@
 Хеш: 5337f888d7ad3760933c5766186188bdcf6c6dec0270a352f23451afda835ecd
-Сумма: 50.0 BTC (80983500.0 RUB)
+Сумма: 50.0 BTC (82852710.0 RUB)
 Потрачены ли: Нет
 Кому: https://www.blockchain.com/explorer/addresses/btc/13wU6wmLoBshNqmBi9Ur8e92eF1eH3kxPP
 
