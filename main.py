@@ -18,6 +18,7 @@ from loguru import logger
 import threading
 import time
 import sqlite3
+from aiogram.utils.exceptions import Throttled
 
 # Переменная для функции auto_check_exchange(last_buy)
 last_buy = 0
@@ -118,6 +119,15 @@ class CallbackDataFilter(Filter):
 bot = Bot(token=API_TOKEN)
 storage = MemoryStorage()
 dispatcher = Dispatcher(bot, storage=storage)
+
+
+async def anti_flood(*args, **kwargs):
+    m = args[0]
+    user_id = str(args[0]).split('"id":')[1].split(', "is_bot"')[0]
+    loguru.logger.info(f"Обнаружен спаммер: ID: {user_id}")
+    await m.answer("Не спамьте, иначе вы будете заблокированы")
+
+
 loguru.logger.debug('Бот был запущен')
 
 
@@ -169,6 +179,7 @@ menu = '''
 
 @logger.catch
 @dispatcher.message_handler(commands='start')
+@dispatcher.throttled(anti_flood, rate=3)
 async def start_handler(message: types.Message):
     """Хэндлер команды /start"""
     chat_id = message.chat.id
@@ -186,6 +197,7 @@ async def start_handler(message: types.Message):
 
 @logger.catch
 @dispatcher.message_handler(commands='last')
+@dispatcher.throttled(anti_flood, rate=3)
 async def last_block_handler(message: types.Message):
     """Хэндлер команды /last"""
     chat_id = message.chat.id
@@ -198,7 +210,8 @@ async def last_block_handler(message: types.Message):
     await bot.send_sticker(chat_id=chat_id,
                            sticker=last_sticker)
     await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
-    wait_id = (await bot.send_message(chat_id, '⚙️ <b>Подготавливаем данные, это может занять некоторое время...</b>', parse_mode='HTML')).message_id
+    wait_id = (await bot.send_message(chat_id, '⚙️ <b>Подготавливаем данные, это может занять некоторое время...</b>',
+                                      parse_mode='HTML')).message_id
     text = f'{await last_block()}'
     await bot.edit_message_text(text=text, chat_id=chat_id, message_id=wait_id, parse_mode='HTML')
     await bot.send_chat_action(chat_id, types.ChatActions.UPLOAD_DOCUMENT)
@@ -208,6 +221,7 @@ async def last_block_handler(message: types.Message):
 
 @logger.catch
 @dispatcher.message_handler(commands='exchange')
+@dispatcher.throttled(anti_flood, rate=3)
 async def exchange_handler(message: types.Message):
     """Хэндлер команды /exchange"""
     chat_id = message.chat.id
@@ -222,11 +236,12 @@ async def exchange_handler(message: types.Message):
                            sticker=exchange_sticker)
     await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
     text = f'{await cryptocurrency_exchange_rate()}'
-    await bot.send_photo(chat_id, 'https://www.tradingview.com/x/6R35t7Uy/', caption=text, parse_mode='HTML', reply_markup=menu_keyboard)
+    await bot.send_message(chat_id, text=text, parse_mode='HTML', reply_markup=menu_keyboard)
 
 
 @logger.catch
 @dispatcher.message_handler(commands='block')
+@dispatcher.throttled(anti_flood, rate=3)
 async def block_handler(message: types.Message, state: FSMContext):
     """Хэндлер команды /block"""
     chat_id = message.chat.id
@@ -243,7 +258,9 @@ async def block_handler(message: types.Message, state: FSMContext):
                                               sticker=block_sticker)).message_id
         await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
         text = f'{await block_by_number(block_id)}'
-        wait_id = (await bot.send_message(chat_id, '⚙️ <b>Подготавливаем данные, это может занять некоторое время...</b>', parse_mode='HTML')).message_id
+        wait_id = (
+            await bot.send_message(chat_id, '⚙️ <b>Подготавливаем данные, это может занять некоторое время...</b>',
+                                   parse_mode='HTML')).message_id
         await bot.edit_message_text(text=text, chat_id=chat_id, message_id=wait_id, parse_mode='HTML')
         if text != '❌ Введен неверный ID блока!':
             await bot.send_chat_action(chat_id, types.ChatActions.UPLOAD_DOCUMENT)
@@ -286,7 +303,8 @@ async def process_block_id(message: types.Message, state: FSMContext):
                                           sticker=block_sticker)).message_id
     await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
     text = f'{await block_by_number(block_id)}'
-    wait_id = (await bot.send_message(chat_id, '⚙️ <b>Подготавливаем данные, это может занять некоторое время...</b>', parse_mode='HTML')).message_id
+    wait_id = (await bot.send_message(chat_id, '⚙️ <b>Подготавливаем данные, это может занять некоторое время...</b>',
+                                      parse_mode='HTML')).message_id
     await bot.edit_message_text(text=text, chat_id=chat_id, message_id=wait_id, parse_mode='HTML')
     if text != '❌ Введен неверный ID блока!':
         await bot.send_chat_action(chat_id, types.ChatActions.UPLOAD_DOCUMENT)
@@ -298,6 +316,7 @@ async def process_block_id(message: types.Message, state: FSMContext):
 
 @logger.catch
 @dispatcher.message_handler(commands='balance')
+@dispatcher.throttled(anti_flood, rate=3)
 async def balance_handler(message: types.Message):
     """Хэндлер команды /balance"""
     chat_id = message.chat.id
@@ -353,6 +372,7 @@ async def process_addr(message: types.Message, state: FSMContext):
 # Добавляем возможность отмены, если пользователь передумал заполнять
 @logger.catch
 @dispatcher.message_handler(state='*', commands='cancel')
+@dispatcher.throttled(anti_flood, rate=3)
 @dispatcher.message_handler(Text(equals='отмена', ignore_case=True), state='*')
 async def cancel_handler(message: types.Message, state: FSMContext):
     """Закрытие state в случае ввода /cancel"""
@@ -373,7 +393,8 @@ async def process_callback_last(callback_query: CallbackQuery):
     await bot.send_sticker(chat_id=chat_id,
                            sticker=last_sticker)
     await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
-    wait_id = (await bot.send_message(chat_id, '⚙️ <b>Подготавливаем данные, это может занять некоторое время...</b>', parse_mode='HTML')).message_id
+    wait_id = (await bot.send_message(chat_id, '⚙️ <b>Подготавливаем данные, это может занять некоторое время...</b>',
+                                      parse_mode='HTML')).message_id
     text = f'{await last_block()}'
     await bot.edit_message_text(text=text, chat_id=chat_id, message_id=wait_id, parse_mode='HTML')
     await bot.send_chat_action(chat_id, types.ChatActions.UPLOAD_DOCUMENT)
@@ -391,7 +412,7 @@ async def process_callback_exchange(callback_query: CallbackQuery):
                            sticker=exchange_sticker)
     await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
     text = f'{await cryptocurrency_exchange_rate()}'
-    await bot.send_photo(chat_id, 'https://www.tradingview.com/x/6R35t7Uy/', caption=text, parse_mode='HTML', reply_markup=menu_keyboard)
+    await bot.send_message(chat_id, text=text, parse_mode='HTML', reply_markup=menu_keyboard)
 
 
 @dispatcher.callback_query_handler(CallbackDataFilter(data='block'))
@@ -436,6 +457,7 @@ async def process_callback_menu(callback_query: CallbackQuery):
 
 
 @dispatcher.message_handler(commands='subscribe')
+@dispatcher.throttled(anti_flood, rate=3)
 async def subscribe_handler(message: types.Message):
     """Хэндлер команды /subscribe"""
     chat_id = message.chat.id
@@ -469,6 +491,7 @@ async def subscribe_handler(message: types.Message):
 
 
 @dispatcher.message_handler(commands='unsubscribe')
+@dispatcher.throttled(anti_flood, rate=3)
 async def unsubscribe_handler(message: types.Message):
     """Хэндлер команды /unsubscribe"""
     chat_id = message.chat.id
