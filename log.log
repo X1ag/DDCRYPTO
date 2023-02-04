@@ -116,3 +116,79 @@
 2023-02-03 23:36:41.070 | INFO     | __main__:unsubscribe_handler:480 - Введена команда /unsubscribe пользователем. Имя: httpshotmaker ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
 2023-02-03 23:36:45.848 | INFO     | __main__:subscribe_handler:447 - Введена команда /subscribe пользователем. Имя: httpshotmaker ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
 2023-02-03 23:36:46.504 | INFO     | __main__:subscribe_handler:466 - Новая подписка на рассылку: ID1074797971
+2023-02-04 17:15:34.767 | DEBUG    | __main__:<module>:121 - Бот был запущен
+2023-02-04 17:15:35.168 | INFO     | __main__:start_handler:180 - Введена команда /start пользователем. Имя: Danila, ID: 404269833, юзернейм: xoreles
+2023-02-04 17:15:51.118 | INFO     | __main__:start_handler:180 - Введена команда /start пользователем. Имя: httpshotmaker ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-02-04 17:15:54.403 | INFO     | __main__:process_callback_exchange:387 - Нажата кнопка курс BTC пользователем
+2023-02-04 18:02:47.587 | INFO     | __main__:process_callback_balance:414 - Нажата кнопка баланс пользователем
+2023-02-04 18:03:03.547 | INFO     | __main__:start_handler:180 - Введена команда /start пользователем. Имя: Danila, ID: 404269833, юзернейм: xoreles
+2023-02-04 18:03:05.529 | INFO     | __main__:process_callback_last:371 - Нажата кнопка последнего блока пользователем
+2023-02-04 19:20:10.290 | DEBUG    | __main__:<module>:121 - Бот был запущен
+2023-02-04 19:20:42.125 | DEBUG    | __main__:<module>:121 - Бот был запущен
+2023-02-04 19:21:07.036 | INFO     | __main__:process_callback_menu:432 - Нажата кнопка меню пользователем
+2023-02-04 19:21:08.456 | INFO     | __main__:process_callback_exchange:387 - Нажата кнопка курс BTC пользователем
+2023-02-04 19:29:01.890 | DEBUG    | __main__:<module>:129 - Бот был запущен
+2023-02-04 19:29:19.758 | DEBUG    | __main__:<module>:129 - Бот был запущен
+2023-02-04 19:29:27.325 | INFO     | __main__:start_handler:188 - Введена команда /start пользователем. Имя: httpshotmaker ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-02-04 19:29:35.831 | INFO     | __main__:start_handler:188 - Введена команда /start пользователем. Имя: httpshotmaker ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-02-04 19:29:36.848 | INFO     | __main__:start_handler:188 - Введена команда /start пользователем. Имя: httpshotmaker ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-02-04 19:29:38.186 | INFO     | __main__:start_handler:188 - Введена команда /start пользователем. Имя: httpshotmaker ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-02-04 19:29:39.781 | INFO     | __main__:start_handler:188 - Введена команда /start пользователем. Имя: httpshotmaker ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-02-04 19:29:41.891 | INFO     | __main__:start_handler:188 - Введена команда /start пользователем. Имя: httpshotmaker ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-02-04 19:29:43.085 | INFO     | __main__:start_handler:188 - Введена команда /start пользователем. Имя: httpshotmaker ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-02-04 19:29:44.189 | INFO     | __main__:start_handler:188 - Введена команда /start пользователем. Имя: httpshotmaker ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-02-04 19:29:44.850 | INFO     | __main__:start_handler:188 - Введена команда /start пользователем. Имя: httpshotmaker ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-02-04 19:29:45.687 | INFO     | __main__:start_handler:188 - Введена команда /start пользователем. Имя: httpshotmaker ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-02-04 19:29:46.523 | INFO     | __main__:start_handler:188 - Введена команда /start пользователем. Имя: httpshotmaker ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-02-04 19:31:57.308 | DEBUG    | __main__:<module>:129 - Бот был запущен
+2023-02-04 19:32:34.411 | DEBUG    | __main__:<module>:129 - Бот был запущен
+2023-02-04 19:32:34.802 | INFO     | __main__:start_handler:189 - Введена команда /start пользователем. Имя: httpshotmaker ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-02-04 19:32:34.933 | INFO     | __main__:start_handler:189 - Введена команда /start пользователем. Имя: httpshotmaker ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-02-04 19:32:41.624 | INFO     | __main__:start_handler:189 - Введена команда /start пользователем. Имя: httpshotmaker ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-02-04 19:33:53.865 | DEBUG    | __main__:<module>:131 - Бот был запущен
+2023-02-04 19:33:59.873 | INFO     | __main__:start_handler:191 - Введена команда /start пользователем. Имя: httpshotmaker ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-02-04 19:34:00.992 | INFO     | __main__:anti_flood:127 - Обнаружен спаммер
+2023-02-04 19:34:01.475 | INFO     | __main__:anti_flood:127 - Обнаружен спаммер
+2023-02-04 19:35:47.823 | DEBUG    | __main__:<module>:132 - Бот был запущен
+2023-02-04 19:35:53.523 | INFO     | __main__:start_handler:192 - Введена команда /start пользователем. Имя: httpshotmaker ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-02-04 19:36:17.948 | DEBUG    | __main__:<module>:132 - Бот был запущен
+2023-02-04 19:36:22.161 | INFO     | __main__:start_handler:192 - Введена команда /start пользователем. Имя: httpshotmaker ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-02-04 19:36:49.010 | DEBUG    | __main__:<module>:132 - Бот был запущен
+2023-02-04 19:36:53.476 | INFO     | __main__:start_handler:192 - Введена команда /start пользователем. Имя: httpshotmaker ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-02-04 19:36:53.867 | INFO     | __main__:anti_flood:128 - Обнаружен спаммер
+2023-02-04 19:36:54.518 | INFO     | __main__:anti_flood:128 - Обнаружен спаммер
+2023-02-04 19:38:49.947 | DEBUG    | __main__:<module>:133 - Бот был запущен
+2023-02-04 19:38:56.752 | INFO     | __main__:start_handler:193 - Введена команда /start пользователем. Имя: httpshotmaker ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-02-04 19:39:19.433 | DEBUG    | __main__:<module>:134 - Бот был запущен
+2023-02-04 19:39:25.423 | INFO     | __main__:start_handler:194 - Введена команда /start пользователем. Имя: httpshotmaker ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-02-04 19:41:26.162 | DEBUG    | __main__:<module>:131 - Бот был запущен
+2023-02-04 19:41:31.979 | INFO     | __main__:start_handler:191 - Введена команда /start пользователем. Имя: httpshotmaker ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-02-04 19:41:32.828 | INFO     | __main__:anti_flood:127 - Обнаружен спаммер:  1074797971
+2023-02-04 19:46:39.025 | DEBUG    | __main__:<module>:131 - Бот был запущен
+2023-02-04 19:46:46.098 | INFO     | __main__:start_handler:191 - Введена команда /start пользователем. Имя: httpshotmaker ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-02-04 19:46:47.237 | INFO     | __main__:anti_flood:127 - Обнаружен спаммер: ID:  1074797971
+2023-02-04 19:50:40.641 | DEBUG    | __main__:<module>:131 - Бот был запущен
+2023-02-04 19:52:32.523 | INFO     | __main__:start_handler:191 - Введена команда /start пользователем. Имя: httpshotmaker ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-02-04 19:52:32.916 | INFO     | __main__:anti_flood:127 - Обнаружен спаммер: ID:  1074797971
+2023-02-04 19:52:33.612 | INFO     | __main__:anti_flood:127 - Обнаружен спаммер: ID:  1074797971
+2023-02-04 19:52:36.160 | INFO     | __main__:anti_flood:127 - Обнаружен спаммер: ID:  1074797971
+2023-02-04 19:52:36.726 | INFO     | __main__:anti_flood:127 - Обнаружен спаммер: ID:  1074797971
+2023-02-04 19:52:47.907 | INFO     | __main__:last_block_handler:209 - Введена команда /last пользователем. Имя: httpshotmaker ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-02-04 19:52:57.134 | INFO     | __main__:last_block_handler:209 - Введена команда /last пользователем. Имя: httpshotmaker ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-02-04 19:52:57.294 | INFO     | __main__:anti_flood:127 - Обнаружен спаммер: ID:  1074797971
+2023-02-04 19:52:57.296 | INFO     | __main__:anti_flood:127 - Обнаружен спаммер: ID:  1074797971
+2023-02-04 19:52:57.298 | INFO     | __main__:anti_flood:127 - Обнаружен спаммер: ID:  1074797971
+2023-02-04 19:52:57.300 | INFO     | __main__:anti_flood:127 - Обнаружен спаммер: ID:  1074797971
+2023-02-04 19:52:57.302 | INFO     | __main__:anti_flood:127 - Обнаружен спаммер: ID:  1074797971
+2023-02-04 19:52:57.305 | INFO     | __main__:anti_flood:127 - Обнаружен спаммер: ID:  1074797971
+2023-02-04 19:52:57.307 | INFO     | __main__:anti_flood:127 - Обнаружен спаммер: ID:  1074797971
+2023-02-04 19:52:57.309 | INFO     | __main__:anti_flood:127 - Обнаружен спаммер: ID:  1074797971
+2023-02-04 19:52:57.311 | INFO     | __main__:anti_flood:127 - Обнаружен спаммер: ID:  1074797971
+2023-02-04 19:53:12.530 | INFO     | __main__:exchange_handler:233 - Введена команда /exchange пользователем. Имя: httpshotmaker ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-02-04 19:53:13.398 | INFO     | __main__:anti_flood:127 - Обнаружен спаммер: ID:  1074797971
+2023-02-04 19:53:13.965 | INFO     | __main__:anti_flood:127 - Обнаружен спаммер: ID:  1074797971
+2023-02-04 19:53:15.731 | INFO     | __main__:anti_flood:127 - Обнаружен спаммер: ID:  1074797971
+2023-02-04 19:53:24.615 | INFO     | __main__:block_handler:252 - Введена команда /block пользователем. Имя: httpshotmaker ᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠᅠ ᅠ, ID: 1074797971, юзернейм: httpshotmaker
+2023-02-04 19:53:26.511 | INFO     | __main__:anti_flood:127 - Обнаружен спаммер: ID:  1074797971
+2023-02-04 19:53:27.314 | INFO     | __main__:anti_flood:127 - Обнаружен спаммер: ID:  1074797971
+2023-02-04 19:53:29.419 | INFO     | __main__:anti_flood:127 - Обнаружен спаммер: ID:  1074797971
