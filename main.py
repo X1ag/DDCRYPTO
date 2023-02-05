@@ -15,10 +15,11 @@ import asyncio
 import os
 import pickle
 from loguru import logger
-import threading
+import schedule
 import time
 import sqlite3
 from aiogram.utils.exceptions import Throttled
+import threading
 
 # Переменная для функции auto_check_exchange(last_buy)
 last_buy = 0
@@ -49,59 +50,66 @@ except:
         pickle.dump(API_TOKEN, write)
 
 
+def parse_from_base():
+    # connect to the database
+    conn = sqlite3.connect('subscribers.db')
+
+    # create cursor object
+    c = conn.cursor()
+
+    # Select all the rows from the table
+    c.execute("SELECT chat_id FROM subscribers")
+
+    # Fetch all the results from the table
+    global subscribers
+    subscribers = c.fetchall()
+    print(subscribers)
+    c.close()
+    conn.close()
+
+
 # Автоматическая проверка курса криптовалюты и информирование всех юзеров о его изменении, если оно равно, либо
 # превышает 2%
 def auto_check_exchange(last_buy):
-    r = requests.get('https://www.blockchain.com/ru/ticker').json()
-    if last_buy != 0:
-        if last_buy / float(r['RUB']['buy']) >= 1.02:
-            # Создание соединения с базой данных
-            conn = sqlite3.connect('subscribers.db')
-            cursor = conn.cursor()
+    while True:
+        r = requests.get('https://www.blockchain.com/ru/ticker').json()
+        if last_buy != 0:
+            logger.debug(f'Старый курс: {last_buy} | Новый курс: {r["RUB"]["buy"]}')
+            if last_buy / float(r['RUB']['buy']) >= 1.02:
+                parse_from_base()
+                # Loop through each row and print the id
+                for row in subscribers:
+                    logger.debug(f'Рассылка: ID{row[0]}')
+                    requests.get(
+                        f'https://api.telegram.org/bot{API_TOKEN}/sendMessage?chat_id={row[0]}&text=❗ Курс упал '
+                        f'на {((last_buy / float(r["RUB"]["buy"])) * 100 - 100):.3f}%')
 
-            # Выбор всех идентификаторов из таблицы
-            cursor.execute("SELECT user_id FROM subscribers")
+            elif float(r['RUB']['buy']) / last_buy >= 1.02:
+                parse_from_base()
+                # Loop through each row and print the id
+                for row in subscribers:
+                    logger.debug(f'Рассылка: ID{row[0]}')
+                    requests.get(f'https://api.telegram.org/bot{API_TOKEN}/sendMessage?chat_id={row}&text=❗ Курс вырос '
+                                 f'на {((last_buy / float(r["RUB"]["buy"])) * 100 - 100):.3f}%')
 
-            # Получение всех идентификаторов в виде списка
-            ids = [x[0] for x in cursor.fetchall()]
-
-            # Цикл по всем идентификаторам
-            for usrid in ids:
-                requests.post(f'https://api.telegram.org/bot{API_TOKEN}/sendMessage?chat_id={usrid}&text=❗ Курс упал '
-                              f'на {(last_buy / float(r["RUB"]["buy"])) * 100 - 100}%')
-                asyncio.sleep(6)
-
-            # Закрытие соединения
-            conn.close()
-        elif float(r['RUB']['buy']) / last_buy >= 1.02:
-            # Создание соединения с базой данных
-            conn = sqlite3.connect('subscribers.db')
-            cursor = conn.cursor()
-
-            # Выбор всех идентификаторов из таблицы
-            cursor.execute("SELECT id FROM subscribers")
-
-            # Получение всех идентификаторов в виде списка
-            ids = [x[0] for x in cursor.fetchall()]
-
-            # Цикл по всем идентификаторам
-            for usrid in ids:
-                requests.post(f'https://api.telegram.org/bot{API_TOKEN}/sendMessage?chat_id={usrid}&text=❗ Курс вырос '
-                              f'на {(last_buy / float(r["RUB"]["buy"])) * 100 - 100}%')
-
-            # Закрытие соединения
-            conn.close()
-    last_buy = r['RUB']['buy']
+        last_buy = r['RUB']['buy']
+        time.sleep(60)
 
 
 # Создание вторичного потока с проверкой (поток нужен во избежание конфликтов с ботом)
-t = threading.Timer(interval=900.0, function=auto_check_exchange, args=(last_buy,))
+def kicker():
+    while True:
+        schedule.every(1).seconds.do(job_func=auto_check_exchange, last_buy=last_buy)
+        schedule.run_pending()
+
+
+t = threading.Thread(target=kicker)
 t.start()
 
 # Конфигурация логирования
 loguru.logger.add(
     "log.log",
-    rotation="7 days",
+    rotation="1 day",
     level="DEBUG"
 )
 
@@ -124,7 +132,7 @@ dispatcher = Dispatcher(bot, storage=storage)
 async def anti_flood(*args, **kwargs):
     m = args[0]
     user_id = str(args[0]).split('"id":')[1].split(', "is_bot"')[0]
-    loguru.logger.info(f"Обнаружен спаммер: ID: {user_id}")
+    logger.warning(f"Обнаружен спаммер: ID: {user_id}")
     await m.answer("Не спамьте, иначе вы будете заблокированы")
 
 
