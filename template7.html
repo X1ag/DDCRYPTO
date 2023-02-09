@@ -6,7 +6,7 @@
 	<head>
 		<style>
 			/*Обнуление*/
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap');
+			@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap');
 *,*:before,*:after{
 	padding: 0;
 	margin: 0;
@@ -28,7 +28,7 @@ html,body{
 }
 /*Стили для демонстрации*/
 body{
-	background-color: #000;
+	background-color: #151515;
 	font-family: 'Montserrat', sans-serif;
 }
 .wrapper{
@@ -72,6 +72,7 @@ body{
 
 	border-radius: 0 0 10px 10px;
 	text-decoration: none;
+	margin-left: 0;
 }
 
 .wave-btn:hover {
@@ -106,8 +107,8 @@ body{
 	background-color: #4973ff;
 	top: 0;
 	left: 0;
-	-webkit-box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
-	box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
+	-webkit-box-shadow: inset 0 0 50px rgba(21, 21, 21, 0.5);;
+	box-shadow: inset 0 0 50px rgba(21, 21, 21, 0.5);
 
 	transition: all 0.8s ease 0s;
 	-webkit-transition: all 0.8s ease 0s;
@@ -132,7 +133,7 @@ body{
 }
 
 .wave-btn__waves:before{
-	background-color: #000;
+	background-color:rgba(21, 21, 21, 1);;
 	border-radius: 48%;
 
 	animation: waves 5s infinite linear;
@@ -141,7 +142,7 @@ body{
 	-o-animation: waves 5s infinite linear;
 }
 .wave-btn__waves:after{
-	background-color: rgba(0,0,0,0.5);
+	background-color: rgba(21, 21, 21, 0.8);;
 	border-radius: 44%;
 
 	animation: waves 10s infinite linear;
@@ -228,38 +229,48 @@ body{
 .logo{
     position: absolute;
     left: 0;
-    width: 99px;
-    height: 96px;
+    width: 80px;
+	margin-left: 20px;
+    height: 82px;
+	background-color: white;
+	border-radius: 64px;
 }
 .header{
     max-width: 1202px;
     padding-right: 15px;
     padding-left: 15px;
     margin: 0 auto;
-    margin-bottom: 50px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-top: 60px;
 }
 .inline {
+	border-radius: 8px;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    color: #151515;
     float: left;
     width: 400px;
     height: 150px;
     white-space: nowrap;
-    color: var(--white);
-    background-color: var(--blue);
+    background: rgba(251, 226, 185, 1);
     margin-top: 50px;
-    margin-left: 150px;
+    margin-left: 70px;
     padding: 68px;
-    border-radius: 32px;
+	margin-bottom: 60px;
+    border-radius: 16px;
     font-weight: 500;
 	font-size: 12px;
     text-decoration: none;
     font-family: 'Montserrat', sans-serif;
     transition: .2s ease background-color;
     border: none;
-	overflow: hidden
+	overflow: hidden;
+}
+.main{
+	margin-bottom: 1000px;
 }
 .bg{
     background-color: black;
@@ -307,7 +318,9 @@ body{
 .number_trans{
 	margin-top: -50px;
 	margin-bottom: 50px;
-	margin-left: 10px
+	margin-left: 10px;
+	display: flex;
+	flex: 1 0 auto;
 }
 .persona_info{
 	word-wrap: break-word;
@@ -316,6 +329,7 @@ body{
 	width: 100px;
 	margin-left: -50px;
 	display: flex;
+	flex: 1 0 auto;
 }
 .ddcrypto{
 	padding-top: 5px ;
@@ -326,15 +340,66 @@ body{
 .tg{
 	height: 45px;
 	width: 40px;
+}			
+.copy_ext{
+	margin-top:30px;
+	padding-bottom: 30px;
+	color: rgba(255,255,255,.3);
+    font-size: 14px;
+    line-height: 10px;
+}
+.line{
+	margin: 0px 15px 15px 4px;
+	padding-top: 30px;
+	border-bottom: 1px solid rgba(255,255,255,.1);
 }
 @media screen and (max-width: 1290px){
 	.name{
 		margin-left: 150px;
 	}
+	.copy_ext{
+		padding-top:20px;
+	}
+	.inline{
+		margin-left: 150px
+	}
+	.line{
+		padding-top: 300px;
+	}
+}
+@media screen and (max-width: 1100px){
+	.inline {
+		margin-left: 45px;
+	}
+	.line{
+		padding-top: 300px;
+	}
+	.copy_ext{
+		padding-top:20px;
+	}
+}
+@media screen and (max-width: 900px){
+	.inline {
+		margin-left: 180px;
+	}
+	.line{
+		padding-top: 1600px;
+	}
+	.copy_ext{
+		padding-top:1px;
+	}
 }
 @media screen and (max-width: 500px){
 	.inline {
 		margin-left: 45px;
+	}
+	.line{
+		margin-top: 50px;
+	}
+	.copy_ext{
+		font-size: 12px;
+		margin-left: 10px;
+		padding-top: 10px;
 	}
 }
 @media screen and (max-width: 450px){
@@ -348,8 +413,8 @@ body{
 	.wave-btn{
 		margin-left: 20px;
 		width: 195px;
-    		height: 45px;
-    		font-size: 12px;
+    	height: 45px;
+    	font-size: 12px;
 	}
 }
 @media screen and (max-width: 400px){
@@ -359,19 +424,13 @@ body{
 	.name{
 		margin-left: 150px
 	}
-	.wave-btn{
-		margin-left: 20px;
-		width: 195px;
-    	height: 45px;
-    	font-size: 12px;
-	}
 }
 @media screen and (max-width: 300px){
 	.wave-btn{
 		margin-left: 20px;
 		width: 195px;
-		height: 45px;
-		font-size: 12px;
+    	height: 45px;
+    	font-size: 12px;
 	}
 	.name{
 		margin-left: 80px
@@ -383,12 +442,44 @@ body{
 		margin-top: -20px;
 		margin-left: 10px;
 		width: 60px;
-    		height: 60px;
+    	height: 60px;
 	}
 	.inline {
 		width: 200px;
 		height: 150px;
 		font-size: 8px;
+	}
+}
+@media screen and (max-width: 200px){
+	.wave-btn{
+		margin-left: 20px;
+		width: 195px;
+    	height: 45px;
+    	font-size: 12px;
+	}
+	.name{
+		margin-left: 80px
+	}
+	.ddcrypto{
+		font-size: 12px;
+	}
+	.logo{
+		margin-top: -20px;
+		margin-left: 10px;
+		width: 60px;
+    	height: 60px;
+	}
+	.tg{
+		width: 20px;
+		height: 20px;
+		padding-top: -20px;
+	}
+	.inline {
+		width: 200px;
+		height: 100px;
+		font-size: 8px;
+		padding-right: 200px;
+		padding-left: -40px;
 	}
 }
 		</style>
@@ -397,13 +488,13 @@ body{
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
-		<link rel="stylesheet" href="style1.css">
+		<link rel="stylesheet" href="style.css">
 		<title>Transactions report - @DDCrypto_Robot</title>
 </head>
 	<!-- Отображаемое тело страницы -->
 	<body>
 		<header class='header'>
-            <img class ='logo' src="https://raw.githubusercontent.com/X1ag/DDCRYPTO/02198bbb4d3e1aa2f8719cb618c87202baeec64f/photo_2022-12-06_20-14-00.jpg.svg" alt="logo">
+            <img class ='logo' src="https://raw.githubusercontent.com/X1ag/DDCRYPTO/ef1fae12556a8a955e9ce4c270610db479fb47fc/photo_2022-12-06_20-14-00.svg" alt="logo">
 			<div class="name">
 				<a href="tg://resolve?domain=DDCrypto_Robot"><img class ='tg' href= 'tg://resolve?domain=DDCrypto_Robot'src="https://raw.githubusercontent.com/X1ag/DDCRYPTO/02198bbb4d3e1aa2f8719cb618c87202baeec64f/telegram-1.svg" alt=""></a>
 				<a href="tg://resolve?domain=DDCrypto_Robot" class="ddcrypto">DDCTYPTO</a>
@@ -411,21 +502,35 @@ body{
 
 
     	</header>
-		<div class="inline">
-			<p class="number_trans">Транзакция 1</p>
-			<p class="persona_info">Потрачено ли: spent1</p>
-			<p class="persona_info">Кому: receiver1</p>
-			<p class="persona_info">Сумма: sums1</p>
+		<!-- Оболочка для демонстрации -->
+		<div class="wrapper">
+			<!-- Контент -->
+			<a href="linktofile" class="wave-btn">
+				<span class="wave-btn__text">Cкачать</span>
+				<span class="wave-btn__waves"></span>
+			</a>
 		</div>
-		<div class="inline"><p class="number_trans">Транзакция 2</p>
-			<div class="persona_info">Потрачено ли: spent2</div>
-			<div class="persona_info">Кому: receiver2</div>
-			<div class="persona_info">Сумма: sums2</div>
+		<div class="main">
+			<div class="inline">
+				<p class="number_trans">Транзакция 1</p>
+				<p class="persona_info">Потрачено ли: spent1</p>
+				<p class="persona_info">Кому: receiver1</p>
+				<p class="persona_info">Сумма: sums1</p>
+			</div>
+			<div class="inline"><p class="number_trans">Транзакция 2</p>
+				<div class="persona_info">Потрачено ли: spent2</div>
+				<div class="persona_info">Кому: receiver2</div>
+				<div class="persona_info">Сумма: sums2</div>
+			</div>
+			<div class="inline"><p class="number_trans">Транзакция 3</p>
+				<div class="persona_info">Потрачено ли: spent3</div>
+				<div class="persona_info">Кому: receiver3</div>
+				<div class="persona_info">Сумма: sums3</div>
+			</div>
 		</div>
-		<div class="inline"><p class="number_trans">Транзакция 3</p>
-			<div class="persona_info">Потрачено ли: spent3</div>
-			<div class="persona_info">Кому: receiver3</div>
-			<div class="persona_info">Сумма: sums3</div>
-		</div>
+		<div class="line"></div>
+		<div class="copy_ext">
+			© 2022-2023. DDCrypto. Все права защищены. 
+		<div>
 	</body>
 </html>
