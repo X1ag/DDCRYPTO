@@ -3,6 +3,18 @@ from blockcypher import get_block_overview
 import asyncio
 
 
+def load_file(file_path):
+    files = {
+        'f': open(f'{file_path}', 'rb'),
+        'randomizefn': (None, '1'),
+        'shorturl': (None, '0'),
+    }
+
+    r = requests.post('https://oshi.at', files=files)
+    return r.text.splitlines()[1].split()[1]
+    
+
+
 async def cryptocurrency_exchange_rate():
     # курс крипты
     global r
@@ -61,18 +73,6 @@ async def last_block():
                     txs_10.write(
                         f'{spent}|1|<a href="https://www.blockchain.com/explorer/addresses/btc/{receiver}">{receiver}</a>|2|{sums} BTC ({sum_rub} RUB)\n')
                     txs_10_ident += 1
-
-    # загрузить файл с транзакциями
-    headers = {
-        'Accept': 'application/json',
-        'Linx-Randomize': 'yes',
-        'Linx-Expiry': '0',
-    }
-
-    with open(f'transactions.txt', 'rb') as f:
-        data = f.read()
-
-    upload = requests.put('https://so.urceco.de/upload/transactions.txt', headers=headers, data=data).json()
 
     # генератор HTML
 
@@ -144,12 +144,12 @@ async def last_block():
     sums10 = receiver10.replace('sums10', templine.split('|2|')[1])
 
     # link
-    done = sums10.replace('linktofile', upload['direct_url'])
+    done = sums10.replace('linktofile', load_file('transactions.txt'))
 
     with open(f'transactions.html', 'w', encoding='cp1251') as txs_report:
         txs_report.write(str(done))
 
-    return f'🔢 <b>Хеш блока</b>: <code>{block_info["hash"]}</code>\n📈 <b>Высота</b>: <code>{block_info["height"]}</code>\n🌍 <b>Сеть</b>: <code>{block_info["chain"]}</code>\n🔢 <b>Nonce</b>: <code>{block_info["nonce"]}</code>\n📡 <b>Кем создан</b>: <code>{block_info["relayed_by"]}</code>\n⛓️ <b>Биты</b>: <code>{block_info["bits"]}</code>\n🕰️ <b>Время</b>: <code>{date_str.split(" ")[0]} {msk}:{date_str.split(":")[1]}</code>'
+    return f'🔢 <b>Хеш блока</b>: <code>{block_info["hash"]}</code>\n🌍 <b>Сеть</b>: <code>{block_info["chain"]}</code>\n🔢 <b>Nonce</b>: <code>{block_info["nonce"]}</code>\n📡 <b>Кем создан</b>: <code>{block_info["relayed_by"]}</code>\n⛓️ <b>Биты</b>: <code>{block_info["bits"]}</code>\n🕰️ <b>Время</b>: <code>{date_str.split(" ")[0]} {msk}:{date_str.split(":")[1]}</code>'
 
 
 # -----------------------------------------------------------
@@ -205,18 +205,6 @@ async def block_by_number(block_id):
                         txs_10.write(
                             f'{spent}|1|<a href="https://www.blockchain.com/explorer/addresses/btc/{receiver}">{receiver}</a>|2|{sums} BTC ({sum_rub} RUB)\n')
                         txs_10_ident += 1
-
-        # загрузить файл с транзакциями
-        headers = {
-            'Accept': 'application/json',
-            'Linx-Randomize': 'yes',
-            'Linx-Expiry': '0',
-        }
-
-        with open(f'transactions.txt', 'rb') as f:
-            data = f.read()
-
-        upload = requests.put('https://so.urceco.de/upload/transactions.txt', headers=headers, data=data).json()
 
         # генератор HTML
 
@@ -289,7 +277,7 @@ async def block_by_number(block_id):
             sums10 = receiver10.replace('sums10', templine.split('|2|')[1])
 
             # link
-            done = sums10.replace('linktofile', upload['direct_url'])
+            done = sums10.replace('linktofile', load_file('transactions.txt'))
 
             with open(f'transactions.html', 'w', encoding='cp1251') as txs_report:
                 txs_report.write(str(done))
@@ -733,7 +721,7 @@ async def block_by_number(block_id):
             with open(f'transactions.html', 'w', encoding='cp1251') as txs_report:
                 txs_report.write(str(sums1))
 
-        return f'🔢 <b>Хеш блока</b>: <code>{block_info["hash"]}</code>\n📈 <b>Высота</b>: <code>{block_info["height"]}</code>\n🌍 <b>Сеть</b>: <code>{block_info["chain"]}</code>\n🔢 <b>Nonce</b>: <code>{block_info["nonce"]}</code>\n📡 <b>Кем создан</b>: <code>{block_info["relayed_by"]}</code>\n⛓️ <b>Биты</b>: <code>{block_info["bits"]}</code>\n🕰️ <b>Время</b>: <code>{date_str.split(" ")[0]} {msk}:{date_str.split(":")[1]}</code>'
+        return f'🔢 <b>Хеш блока</b>: <code>{block_info["hash"]}</code>\n🌍 <b>Сеть</b>: <code>{block_info["chain"]}</code>\n🔢 <b>Nonce</b>: <code>{block_info["nonce"]}</code>\n📡 <b>Кем создан</b>: <code>{block_info["relayed_by"]}</code>\n⛓️ <b>Биты</b>: <code>{block_info["bits"]}</code>\n🕰️ <b>Время</b>: <code>{date_str.split(" ")[0]} {msk}:{date_str.split(":")[1]}</code>'
     except:
         return '❌ Введен неверный ID блока!'
 
@@ -771,7 +759,6 @@ async def btc_adress_balance(addr):
         return '❌ Введен неверный адрес кошелька!'
 
 
-
 # -----------------------------------------------------------
 
 # Старт в дебаг моде, если файл запущен как мейн
@@ -780,10 +767,13 @@ if __name__ == '__main__':
     asyncio.run(cryptocurrency_exchange_rate())
     print(f"Покупка: {r['RUB']['buy']} {r['RUB']['symbol']}\nПродажа: {r['RUB']['sell']} {r['RUB']['symbol']}")
     asyncio.run(last_block())
-    print(f'Хеш блока: {block_info["hash"]}\nВысота: {block_info["height"]}\nСеть: {block_info["chain"]}\nNonce: {block_info["nonce"]}\nКем создан: {block_info["relayed_by"]}\nБиты: {block_info["bits"]}\nВремя: {date_str.split(" ")[0]} {msk}:{date_str.split(":")[1]}')
+    print(
+        f'Хеш блока: {block_info["hash"]}\nСеть: {block_info["chain"]}\nNonce: {block_info["nonce"]}\nКем создан: {block_info["relayed_by"]}\nБиты: {block_info["bits"]}\nВремя: {date_str.split(" ")[0]} {msk}:{date_str.split(":")[1]}')
     block_id = input('Введите Block ID: ')
     asyncio.run(block_by_number(block_id))
-    print(f'Хеш блока: {block_info["hash"]}\nВысота: {block_info["height"]}\nСеть: {block_info["chain"]}\nNonce: {block_info["nonce"]}\nКем создан: {block_info["relayed_by"]}\nБиты: {block_info["bits"]}\nВремя: {date_str.split(" ")[0]} {msk}:{date_str.split(":")[1]}')
+    print(
+        f'Хеш блока: {block_info["hash"]}\nСеть: {block_info["chain"]}\nNonce: {block_info["nonce"]}\nКем создан: {block_info["relayed_by"]}\nБиты: {block_info["bits"]}\nВремя: {date_str.split(" ")[0]} {msk}:{date_str.split(":")[1]}')
     addr = input('Введите BTC адрес: ')
     asyncio.run(btc_adress_balance(addr))
-    print(f'Хеш-160: {one_btc_balance["hash160"]}\nАдрес: {hidden_addr}\nВсего получено: {total_received} BTC ({total_received_rub} RUB)\nВсего отправлено: {total_sent} BTC ({total_sent_rub} RUB)\nИтоговый баланс: {final_balance} BTC ({final_balance_rub} RUB)')
+    print(
+        f'Хеш-160: {one_btc_balance["hash160"]}\nАдрес: {hidden_addr}\nВсего получено: {total_received} BTC ({total_received_rub} RUB)\nВсего отправлено: {total_sent} BTC ({total_sent_rub} RUB)\nИтоговый баланс: {final_balance} BTC ({final_balance_rub} RUB)')

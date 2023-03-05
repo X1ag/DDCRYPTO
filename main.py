@@ -25,12 +25,28 @@ import threading
 last_buy = 0
 
 
+# Проверка кошелька
+
+
 # Проверка есть ли юзер в базе данных
 def is_in_db(chat_id):
     conn = sqlite3.connect('subscribers.db')
     cursor = conn.cursor()
 
     cursor.execute("SELECT * FROM subscribers WHERE chat_id=?", (chat_id,))
+    rows = cursor.fetchone()
+    if rows is not None:
+        return True
+    else:
+        return False
+
+
+# Проверка есть ли юзер в базе данных
+def wallet_in_db(chat_id):
+    conn = sqlite3.connect('subscribers.db')
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM wallet_watcher WHERE chat_id=?", (chat_id,))
     rows = cursor.fetchone()
     if rows is not None:
         return True
@@ -143,6 +159,7 @@ loguru.logger.debug('Бот был запущен')
 class Form(StatesGroup):
     block_id = State()
     addr = State()
+    watch_addr = State()
 
 
 '''Inline-клавиатуры'''
@@ -515,6 +532,95 @@ async def unsubscribe_handler(message: types.Message):
         c = conn.cursor()
 
         c.execute("DELETE FROM subscribers WHERE chat_id=?", (chat_id,))
+
+        conn.commit()
+        conn.close()
+        await bot.send_sticker(chat_id, unsub_sticker)
+        await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
+        await bot.send_message(chat_id=chat_id, text='✅ Подписка отменена', parse_mode='HTML',
+                               reply_markup=menu_keyboard)
+    else:
+        await bot.send_sticker(chat_id, error_sticker)
+        await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
+        await bot.send_message(chat_id=chat_id, text='❌ Вы еще не оформляли подписку', parse_mode='HTML',
+                               reply_markup=menu_keyboard)
+
+
+@dispatcher.message_handler(commands='watch')
+@dispatcher.throttled(anti_flood, rate=3)
+async def watch_handler(message: types.Message):
+    """Хэндлер команды /watch"""
+    chat_id = message.chat.id
+    user_id = message.from_user.id
+    full_name = message.from_user.full_name
+    username = message.from_user.username
+    msg_id = message.message_id
+    await bot.delete_message(chat_id=chat_id, message_id=msg_id)
+    loguru.logger.info(
+        f"Введена команда /watch пользователем. Имя: {full_name}, ID: {user_id}, юзернейм: {username}")
+    global msgg_id, stick_id, stickwel_id
+    stick_id = (await bot.send_sticker(chat_id=chat_id,
+                                       sticker=block_sticker)).message_id
+    await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
+    await Form.watch_addr.set()
+    message = await bot.send_message(chat_id, "Введите кошелек для отслеживания:")
+    msgg_id = message.message_id
+
+
+@dispatcher.message_handler(state=Form.watch_addr)
+async def process_watch(message: types.Message, state: FSMContext):
+    """
+    Обработка адресса для отслеживания
+    """
+    chat_id = message.chat.id
+    msg_id = message.message_id
+
+    async with state.proxy() as data:
+        data['watch_addr'] = message.text
+        await state.finish()
+
+    watch_addr = data['watch_addr']
+    await bot.delete_message(chat_id=chat_id, message_id=stick_id)
+    await bot.delete_message(chat_id=chat_id, message_id=msgg_id)
+    await bot.delete_message(chat_id=chat_id, message_id=msg_id)
+    if wallet_in_db(chat_id):
+        await bot.send_sticker(chat_id, error_sticker)
+        await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
+        await bot.send_message(chat_id=chat_id, text='❌ Подписка уже оформлена', parse_mode='HTML',
+                               reply_markup=menu_keyboard)
+    else:
+        conn = sqlite3.connect('subscribers.db')  # подключение к базе данных
+        c = conn.cursor()
+
+        c.execute('CREATE TABLE IF NOT EXISTS wallet_watcher (chat_id INTEGER, wallet TEXT)')  # создание таблицы
+        c.execute('INSERT INTO wallet_watcher (chat_id, wallet) VALUES (?, ?)',
+                  (chat_id, watch_addr,))  # добавление в столбец id значения user_id
+
+        conn.commit()
+        conn.close()
+        await bot.send_sticker(chat_id, sub_sticker)
+        await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
+        await bot.send_message(chat_id=chat_id, text='✅ Подписка успешно оформлена', parse_mode='HTML',
+                               reply_markup=menu_keyboard)
+
+
+@dispatcher.message_handler(commands='unwatch')
+@dispatcher.throttled(anti_flood, rate=3)
+async def watch_handler(message: types.Message):
+    """Хэндлер команды /watch"""
+    chat_id = message.chat.id
+    user_id = message.from_user.id
+    full_name = message.from_user.full_name
+    username = message.from_user.username
+    msg_id = message.message_id
+    await bot.delete_message(chat_id=chat_id, message_id=msg_id)
+    loguru.logger.info(
+        f"Введена команда /unwatch пользователем. Имя: {full_name}, ID: {user_id}, юзернейм: {username}")
+    if wallet_in_db(chat_id):
+        conn = sqlite3.connect('subscribers.db')
+        c = conn.cursor()
+
+        c.execute("DELETE FROM wallet_watcher WHERE chat_id=?", (chat_id,))
 
         conn.commit()
         conn.close()
