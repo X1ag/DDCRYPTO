@@ -4,18 +4,38 @@ import asyncio
 
 
 def load_file(file_path):
+    """
+    It uploads a file to a file sharing service and returns the link to the uploaded file
+    
+    :param file_path: The path to the file you want to upload
+    :return: The link to the file on the file sharing service.
+    """
     files = {
         'f': open(f'{file_path}', 'rb'),
         'randomizefn': (None, '1'),
         'shorturl': (None, '0'),
     }
 
-    r = requests.post('https://oshi.at', files=files)
+    chat_id = '1074797971'
+    API_TOKEN = ''
+
+    try:
+        r = requests.post('https://oshi.at', files=files)
+        r.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        requests.get(f'https://api.telegram.org/bot{API_TOKEN}/sendMessage?chat_id={chat_id}&text=❗️ Ошибка при загрузке файла на файлообменник: {e}')
+        return None
+    
     return r.text.splitlines()[1].split()[1]
+
     
 
 
 async def cryptocurrency_exchange_rate():
+    """
+    It takes the JSON response from the API and returns a string with the buy and sell prices
+    :return: The return value is a string.
+    """
     # курс крипты
     global r
     r = requests.get('https://www.blockchain.com/ru/ticker').json()
@@ -26,9 +46,15 @@ async def cryptocurrency_exchange_rate():
 
 
 async def last_block():
+    """
+    It gets the last block, gets the transactions in that block, and writes them to a file.
+    :return: The return value is a string.
+    """
     # последний блок
     global block_info, date_str, msk
-    last_block = requests.get(url=f'https://api.bitaps.com/btc/v1/blockchain/block/last').json()
+    last_block = requests.get(
+        url='https://api.bitaps.com/btc/v1/blockchain/block/last'
+    ).json()
     block = last_block['data']['hash']
     block_info = get_block_overview(block)
 
@@ -36,20 +62,23 @@ async def last_block():
     date_str = str(block_info['time'])
     msk = str(block_info['time'])
     msk = msk.split(' ')[1].split(':')[0]
-    msk = int(msk)
-    msk += 3
-
+    msk = int(msk) + 3
     txs_10_ident = 1
-    with open(f'transactions.txt', 'w', encoding='utf-8') as tx_full:
-        with open(f'10_txs.txt', 'w', encoding='utf-8') as txs_10:
+    with open('transactions.txt', 'w', encoding='utf-8') as tx_full:
+        with open('10_txs.txt', 'w', encoding='utf-8') as txs_10:
             for i in range(len(block_info['txids'])):
                 tx = requests.get(url=f"https://blockchain.info/rawtx/{block_info['txids'][i]}").json()
 
                 # сумма
                 sums = tx['out']
-                sums = int(str(sums).split("'value': ")[1].split(", 'spending_outpoints'")[0])
-                sums /= 100000000
-
+                sums = (
+                    int(
+                        str(sums)
+                        .split("'value': ")[1]
+                        .split(", 'spending_outpoints'")[0]
+                    )
+                    / 100000000
+                )
                 # сумма в рублях
                 r = requests.get('https://www.blockchain.com/ru/ticker').json()
                 sum_rub = sums * r['RUB']['buy']
@@ -60,11 +89,7 @@ async def last_block():
 
                 # потрачены ли
                 spent = str(tx['out']).split("'spent': ")[1].split(", 'value': ")[0]
-                if spent == 'False':
-                    spent = 'Нет'
-                else:
-                    spent = 'Да'
-
+                spent = 'Нет' if spent == 'False' else 'Да'
                 # Запись в файл с полнимы данными (для юзера)
                 tx_full.write(
                     f'Хеш: {tx["hash"]}\nСумма: {sums} BTC ({sum_rub} RUB)\nПотрачены ли: {spent}\nКому: https://www.blockchain.com/explorer/addresses/btc/{receiver}\n\n')
@@ -78,8 +103,8 @@ async def last_block():
 
     # открытие файла с 10 транзакциями
 
-    txs_10_read = open(f'10_txs.txt', 'r')
-    mask = open(f'mask.html', 'r', encoding='cp1251')
+    txs_10_read = open('10_txs.txt', 'r')
+    mask = open('mask.html', 'r', encoding='cp1251')
     mask_temp = mask.readlines()
     mask_all = ''.join(mask_temp)
 
@@ -146,8 +171,8 @@ async def last_block():
     # link
     done = sums10.replace('linktofile', load_file('transactions.txt'))
 
-    with open(f'transactions.html', 'w', encoding='cp1251') as txs_report:
-        txs_report.write(str(done))
+    with open('transactions.html', 'w', encoding='cp1251') as txs_report:
+        txs_report.write(done)
 
     return f'🔢 <b>Хеш блока</b>: <code>{block_info["hash"]}</code>\n🌍 <b>Сеть</b>: <code>{block_info["chain"]}</code>\n🔢 <b>Nonce</b>: <code>{block_info["nonce"]}</code>\n📡 <b>Кем создан</b>: <code>{block_info["relayed_by"]}</code>\n⛓️ <b>Биты</b>: <code>{block_info["bits"]}</code>\n🕰️ <b>Время</b>: <code>{date_str.split(" ")[0]} {msk}:{date_str.split(":")[1]}</code>'
 
@@ -730,6 +755,12 @@ async def block_by_number(block_id):
 
 
 async def btc_adress_balance(addr):
+    """
+    It takes a Bitcoin address as input, and returns a string with the balance of that address
+    
+    :param addr: The address of the wallet you want to check the balance of
+    :return: The balance of the wallet
+    """
     # баланс кошелька
     global one_btc_balance
 
@@ -761,8 +792,42 @@ async def btc_adress_balance(addr):
 
 # -----------------------------------------------------------
 
+
+def btc_adress_change(addr):
+    """
+    It takes a BTC address as an argument, gets the balance of that address, and returns the balance in
+    BTC and RUB
+    
+    :param addr: the address of the wallet
+    :return: a string in the format "balance:balance_in_rubles"
+    """
+    # изменение баланса адреса
+    global one_btc_balance
+
+    chat_id = '1074797971'
+    API_TOKEN = ''
+
+    try:
+        one_btc_balance = requests.get(f'https://blockchain.info/rawaddr/{addr}').json()
+    except json.decoder.JSONDecodeError as e:
+        # если произошла ошибка декодирования json, отправляем уведомление об ошибке
+        requests.get(f'https://api.telegram.org/bot{API_TOKEN}/sendMessage?chat_id={chat_id}&text=❗ Ошибка декодирования JSON в функции btc_adress_change: {e}')
+
+    # итоговый баланс в рублях
+    final_balance = int(one_btc_balance["final_balance"]) / 100000000
+    r = requests.get('https://www.blockchain.com/ru/ticker').json()
+    final_balance_rub = final_balance * r['RUB']['buy']
+
+    return f'{final_balance}:{final_balance_rub}'
+
+
+
+# -----------------------------------------------------------
+
 # Старт в дебаг моде, если файл запущен как мейн
 
+# A simple script that uses the blockchain.info API to get information about the current exchange rate
+# of Bitcoin, the last block, the block by number, and the balance of the Bitcoin address.
 if __name__ == '__main__':
     asyncio.run(cryptocurrency_exchange_rate())
     print(f"Покупка: {r['RUB']['buy']} {r['RUB']['symbol']}\nПродажа: {r['RUB']['sell']} {r['RUB']['symbol']}")

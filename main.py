@@ -20,6 +20,7 @@ import time
 import sqlite3
 from aiogram.utils.exceptions import Throttled
 import threading
+from datetime import datetime
 
 # Переменная для функции auto_check_exchange(last_buy)
 last_buy = 0
@@ -33,12 +34,10 @@ def is_in_db(chat_id):
     conn = sqlite3.connect('subscribers.db')
     cursor = conn.cursor()
 
+    cursor.execute('CREATE TABLE IF NOT EXISTS subscribers (chat_id INTEGER)')
     cursor.execute("SELECT * FROM subscribers WHERE chat_id=?", (chat_id,))
     rows = cursor.fetchone()
-    if rows is not None:
-        return True
-    else:
-        return False
+    return rows is not None
 
 
 # Проверка есть ли юзер в базе данных
@@ -46,12 +45,47 @@ def wallet_in_db(chat_id):
     conn = sqlite3.connect('subscribers.db')
     cursor = conn.cursor()
 
+    cursor.execute('CREATE TABLE IF NOT EXISTS wallet_watcher (chat_id INTEGER, wallet TEXT, balance TEXT)')  # создание таблицы
     cursor.execute("SELECT * FROM wallet_watcher WHERE chat_id=?", (chat_id,))
+    
     rows = cursor.fetchone()
-    if rows is not None:
-        return True
-    else:
-        return False
+    return rows is not None
+
+
+# Поиск адреса кошелька в базе данных
+def get_wallet(chat_id):
+    conn = sqlite3.connect('subscribers.db')
+    cursor = conn.cursor()
+
+    cursor.execute('CREATE TABLE IF NOT EXISTS wallet_watcher (chat_id INTEGER, wallet TEXT, balance TEXT)')
+    cursor.execute("SELECT wallet FROM wallet_watcher WHERE chat_id=?", (chat_id,))
+
+    subscribers = cursor.fetchone()
+    return subscribers[0] if subscribers is not None else None
+
+
+# Поиск даты последней проверки в базе данных
+def get_last_check(chat_id):
+    conn = sqlite3.connect('subscribers.db')
+    cursor = conn.cursor()
+
+    cursor.execute('CREATE TABLE IF NOT EXISTS wallet_watcher (chat_id INTEGER, wallet TEXT, balance TEXT)')  # создание таблицы
+    cursor.execute("SELECT date FROM wallet_watcher WHERE chat_id=?", (chat_id,))
+    
+    subscribers = cursor.fetchone()
+    return subscribers[0] if subscribers is not None else None
+
+
+# Получение старого баланса
+def get_old_balance(chat_id):
+    conn = sqlite3.connect('subscribers.db')
+    cursor = conn.cursor()
+
+    cursor.execute('CREATE TABLE IF NOT EXISTS wallet_watcher (chat_id INTEGER, wallet TEXT, balance TEXT)')  # создание таблицы
+    cursor.execute("SELECT balance FROM wallet_watcher WHERE chat_id=?", (chat_id,))
+    
+    subscribers = cursor.fetchone()
+    return subscribers[0] if subscribers is not None else None
 
 
 # Конфигурация файла с токеном бота
@@ -59,7 +93,7 @@ try:
     # Читаем переменную data из файла 'save.pkl'
     with open('save.pkl', 'rb') as read:
         API_TOKEN = pickle.load(read)
-except:
+except FileNotFoundError:
     API_TOKEN = input('Введите API токен:\n> ')
     # Сохраняем переменную data в файл 'save.pkl'
     with open('save.pkl', 'wb') as write:
@@ -73,52 +107,113 @@ def parse_from_base():
     # create cursor object
     c = conn.cursor()
 
+    c.execute('CREATE TABLE IF NOT EXISTS subscribers (chat_id INTEGER)')
     # Select all the rows from the table
     c.execute("SELECT chat_id FROM subscribers")
 
     # Fetch all the results from the table
     global subscribers
     subscribers = c.fetchall()
-    print(subscribers)
+    subscribers = [i[0] for i in subscribers]
     c.close()
     conn.close()
+
+
+def parse_from_base_wallet():
+    # connect to the database
+    conn = sqlite3.connect('subscribers.db')
+
+    # create cursor object
+    c = conn.cursor()
+
+    c.execute('CREATE TABLE IF NOT EXISTS wallet_watcher (chat_id INTEGER, wallet TEXT, balance TEXT)')  # создание таблицы
+    # Select all the rows from the table
+    c.execute("SELECT chat_id FROM wallet_watcher")
+
+    # Fetch all the results from the table
+    subscribers = c.fetchall()
+    subscribers = [i[0] for i in subscribers]
+    c.close()
+    conn.close()
+    return subscribers
 
 
 # Автоматическая проверка курса криптовалюты и информирование всех юзеров о его изменении, если оно равно, либо
 # превышает 2%
 def auto_check_exchange(last_buy):
-    while True:
-        r = requests.get('https://www.blockchain.com/ru/ticker').json()
-        if last_buy != 0:
-            logger.debug(f'Старый курс: {last_buy} | Новый курс: {r["RUB"]["buy"]}')
-            if last_buy / float(r['RUB']['buy']) >= 1.02:
-                parse_from_base()
-                # Loop through each row and print the id
-                for row in subscribers:
-                    logger.debug(f'Рассылка: ID{row[0]}')
-                    requests.get(
-                        f'https://api.telegram.org/bot{API_TOKEN}/sendMessage?chat_id={row[0]}&text=❗ Курс упал '
-                        f'на {((last_buy / float(r["RUB"]["buy"])) * 100 - 100):.3f}%')
+    logger.debug('Автоматическая проверка курса криптовалюты...')
+    r = requests.get('https://www.blockchain.com/ru/ticker').json()
+    if last_buy != 0:
+        logger.debug(f'Старый курс: {last_buy} | Новый курс: {r["RUB"]["buy"]}')
+        if last_buy / float(r['RUB']['buy']) >= 1.02:
+            parse_from_base()
+            # Loop through each row and print the id
+            for row in subscribers:
+                logger.debug(f'Рассылка: ID{row}')
+                requests.get(
+                    f'https://api.telegram.org/bot{API_TOKEN}/sendMessage?chat_id={row}&text=❗ Курс упал '
+                    f'на {((last_buy / float(r["RUB"]["buy"])) * 100 - 100):.3f}%')
 
-            elif float(r['RUB']['buy']) / last_buy >= 1.02:
-                parse_from_base()
-                # Loop through each row and print the id
-                for row in subscribers:
-                    logger.debug(f'Рассылка: ID{row[0]}')
-                    requests.get(f'https://api.telegram.org/bot{API_TOKEN}/sendMessage?chat_id={row}&text=❗ Курс вырос '
-                                 f'на {((last_buy / float(r["RUB"]["buy"])) * 100 - 100):.3f}%')
+        elif float(r['RUB']['buy']) / last_buy >= 1.02:
+            parse_from_base()
+            # Loop through each row and print the id
+            for row in subscribers:
+                logger.debug(f'Рассылка: ID{row}')
+                requests.get(f'https://api.telegram.org/bot{API_TOKEN}/sendMessage?chat_id={row}&text=❗ Курс вырос '
+                            f'на {((last_buy / float(r["RUB"]["buy"])) * 100 - 100):.3f}%')
 
-        last_buy = r['RUB']['buy']
-        time.sleep(60)
+    last_buy = r['RUB']['buy']
 
 
-# Создание вторичного потока с проверкой (поток нужен во избежание конфликтов с ботом)
+# Автоматическая проверка баланса криптокошелька
+def auto_check_wallet():
+    logger.debug('Автоматическая проверка баланса криптокошельков...')
+    subscribers = parse_from_base_wallet()
+    for row in subscribers:
+        print(row)
+        wallet = get_wallet(row)
+        print(wallet)
+        balance = f'{btc_adress_change(wallet)}'
+
+        if balance != f'{get_old_balance(row)}' and float(balance.split(":")[0]) > float(get_old_balance(row).split(":")[0]):
+            btc_diff = float(balance.split(":")[0]) - float(get_old_balance(row).split(":")[0])
+            rub_diff = float(balance.split(":")[1]) - float(get_old_balance(row).split(":")[1])
+            requests.get(f'https://api.telegram.org/bot{API_TOKEN}/sendMessage?chat_id={row}&text=❗ Кошелек пополнен на {btc_diff:.3f} BTC ({rub_diff:.3f} RUB)')
+        elif balance != f'{get_old_balance(row)}' and float(balance.split(":")[0]) < float(get_old_balance(row).split(":")[0]):
+            btc_diff = float(get_old_balance(row).split(":")[0]) - float(balance.split(":")[0])
+            rub_diff = float(get_old_balance(row).split(":")[1]) - float(balance.split(":")[1])
+            requests.get(f'https://api.telegram.org/bot{API_TOKEN}/sendMessage?chat_id={row}&text=❗ С кошелька выведено {btc_diff:.3f} BTC ({rub_diff:.3f} RUB)')
+
+        conn = sqlite3.connect('subscribers.db')
+        cursor = conn.cursor()
+        cursor.execute("UPDATE wallet_watcher SET balance = ? WHERE chat_id = ?", (balance, row))
+        conn.commit()
+        time.sleep(5)
+
+
+
+def start_funcs():
+    """
+    It's a function that runs a function every minute, and that function runs two other functions in
+    parallel
+    """
+    t1 = threading.Thread(target=auto_check_exchange, args=(last_buy,))
+    t2 = threading.Thread(target=auto_check_wallet)
+    t1.start()
+    t2.start()
+
 def kicker():
+    """
+    It runs the start_funcs function every minute.
+    """
+    start_funcs()
+    schedule.every(15).minutes.do(job_func=start_funcs)
     while True:
-        schedule.every(1).seconds.do(job_func=auto_check_exchange, last_buy=last_buy)
         schedule.run_pending()
+        time.sleep(900)
 
 
+# Creating a thread that will run the function kicker()
 t = threading.Thread(target=kicker)
 t.start()
 
@@ -592,14 +687,17 @@ async def process_watch(message: types.Message, state: FSMContext):
         conn = sqlite3.connect('subscribers.db')  # подключение к базе данных
         c = conn.cursor()
 
-        c.execute('CREATE TABLE IF NOT EXISTS wallet_watcher (chat_id INTEGER, wallet TEXT)')  # создание таблицы
-        c.execute('INSERT INTO wallet_watcher (chat_id, wallet) VALUES (?, ?)',
-                  (chat_id, watch_addr,))  # добавление в столбец id значения user_id
+        c.execute('CREATE TABLE IF NOT EXISTS wallet_watcher (chat_id INTEGER, wallet TEXT, balance TEXT)')  # создание таблицы
+        c.execute(
+            'INSERT INTO wallet_watcher (chat_id, wallet, balance) VALUES (?, ?, ?)',
+            (chat_id, watch_addr, btc_adress_change(watch_addr)),
+        )
 
         conn.commit()
         conn.close()
         await bot.send_sticker(chat_id, sub_sticker)
         await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
+        loguru.logger.info(f"Новая подписка на отслеживание баланса криптокошелька: ID{chat_id}")
         await bot.send_message(chat_id=chat_id, text='✅ Подписка успешно оформлена', parse_mode='HTML',
                                reply_markup=menu_keyboard)
 
