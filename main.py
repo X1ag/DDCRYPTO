@@ -20,73 +20,15 @@ import time
 import sqlite3
 from aiogram.utils.exceptions import Throttled
 import threading
-from datetime import datetime
+from typing import List
+
+sys.path.append('src')
+from dbs import *
+from classes import *
+from ux_and_ui import *
 
 # Переменная для функции auto_check_exchange(last_buy)
 last_buy = 0
-
-
-# Проверка кошелька
-
-
-# Проверка есть ли юзер в базе данных
-def is_in_db(chat_id):
-    conn = sqlite3.connect('subscribers.db')
-    cursor = conn.cursor()
-
-    cursor.execute('CREATE TABLE IF NOT EXISTS subscribers (chat_id INTEGER)')
-    cursor.execute("SELECT * FROM subscribers WHERE chat_id=?", (chat_id,))
-    rows = cursor.fetchone()
-    return rows is not None
-
-
-# Проверка есть ли юзер в базе данных
-def wallet_in_db(chat_id):
-    conn = sqlite3.connect('subscribers.db')
-    cursor = conn.cursor()
-
-    cursor.execute('CREATE TABLE IF NOT EXISTS wallet_watcher (chat_id INTEGER, wallet TEXT, balance TEXT)')  # создание таблицы
-    cursor.execute("SELECT * FROM wallet_watcher WHERE chat_id=?", (chat_id,))
-    
-    rows = cursor.fetchone()
-    return rows is not None
-
-
-# Поиск адреса кошелька в базе данных
-def get_wallet(chat_id):
-    conn = sqlite3.connect('subscribers.db')
-    cursor = conn.cursor()
-
-    cursor.execute('CREATE TABLE IF NOT EXISTS wallet_watcher (chat_id INTEGER, wallet TEXT, balance TEXT)')
-    cursor.execute("SELECT wallet FROM wallet_watcher WHERE chat_id=?", (chat_id,))
-
-    subscribers = cursor.fetchone()
-    return subscribers[0] if subscribers is not None else None
-
-
-# Поиск даты последней проверки в базе данных
-def get_last_check(chat_id):
-    conn = sqlite3.connect('subscribers.db')
-    cursor = conn.cursor()
-
-    cursor.execute('CREATE TABLE IF NOT EXISTS wallet_watcher (chat_id INTEGER, wallet TEXT, balance TEXT)')  # создание таблицы
-    cursor.execute("SELECT date FROM wallet_watcher WHERE chat_id=?", (chat_id,))
-    
-    subscribers = cursor.fetchone()
-    return subscribers[0] if subscribers is not None else None
-
-
-# Получение старого баланса
-def get_old_balance(chat_id):
-    conn = sqlite3.connect('subscribers.db')
-    cursor = conn.cursor()
-
-    cursor.execute('CREATE TABLE IF NOT EXISTS wallet_watcher (chat_id INTEGER, wallet TEXT, balance TEXT)')  # создание таблицы
-    cursor.execute("SELECT balance FROM wallet_watcher WHERE chat_id=?", (chat_id,))
-    
-    subscribers = cursor.fetchone()
-    return subscribers[0] if subscribers is not None else None
-
 
 # Конфигурация файла с токеном бота
 try:
@@ -100,42 +42,8 @@ except FileNotFoundError:
         pickle.dump(API_TOKEN, write)
 
 
-def parse_from_base():
-    # connect to the database
-    conn = sqlite3.connect('subscribers.db')
-
-    # create cursor object
-    c = conn.cursor()
-
-    c.execute('CREATE TABLE IF NOT EXISTS subscribers (chat_id INTEGER)')
-    # Select all the rows from the table
-    c.execute("SELECT chat_id FROM subscribers")
-
-    # Fetch all the results from the table
-    global subscribers
-    subscribers = c.fetchall()
-    subscribers = [i[0] for i in subscribers]
-    c.close()
-    conn.close()
-
-
-def parse_from_base_wallet():
-    # connect to the database
-    conn = sqlite3.connect('subscribers.db')
-
-    # create cursor object
-    c = conn.cursor()
-
-    c.execute('CREATE TABLE IF NOT EXISTS wallet_watcher (chat_id INTEGER, wallet TEXT, balance TEXT)')  # создание таблицы
-    # Select all the rows from the table
-    c.execute("SELECT chat_id FROM wallet_watcher")
-
-    # Fetch all the results from the table
-    subscribers = c.fetchall()
-    subscribers = [i[0] for i in subscribers]
-    c.close()
-    conn.close()
-    return subscribers
+# Список администраторов
+ADMIN_IDS = [1074797971, 744246158] # список id администраторов
 
 
 # Автоматическая проверка курса криптовалюты и информирование всех юзеров о его изменении, если оно равно, либо
@@ -170,9 +78,7 @@ def auto_check_wallet():
     logger.debug('Автоматическая проверка баланса криптокошельков...')
     subscribers = parse_from_base_wallet()
     for row in subscribers:
-        print(row)
         wallet = get_wallet(row)
-        print(wallet)
         balance = f'{btc_adress_change(wallet)}'
 
         if balance != f'{get_old_balance(row)}' and float(balance.split(":")[0]) > float(get_old_balance(row).split(":")[0]):
@@ -184,7 +90,7 @@ def auto_check_wallet():
             rub_diff = float(get_old_balance(row).split(":")[1]) - float(balance.split(":")[1])
             requests.get(f'https://api.telegram.org/bot{API_TOKEN}/sendMessage?chat_id={row}&text=❗ С кошелька выведено {btc_diff:.3f} BTC ({rub_diff:.3f} RUB)')
 
-        conn = sqlite3.connect('subscribers.db')
+        conn = sqlite3.connect('dbs/subscribers.db')
         cursor = conn.cursor()
         cursor.execute("UPDATE wallet_watcher SET balance = ? WHERE chat_id = ?", (balance, row))
         conn.commit()
@@ -218,20 +124,22 @@ t = threading.Thread(target=kicker)
 t.start()
 
 # Конфигурация логирования
-loguru.logger.add(
-    "log.log",
+logs_dir = "logs"
+log_filename = "log.log"
+
+if not os.path.exists(logs_dir):
+    os.mkdir(logs_dir)
+
+logger.add(
+    f"{logs_dir}/{log_filename}",
     rotation="1 day",
-    level="DEBUG"
+    level="DEBUG",
+    backtrace=True,
+    retention="8 days"
 )
 
-
-# Фильтр Callback вызовов Inline-кнопок
-class CallbackDataFilter(Filter):
-    def __init__(self, data: str):
-        self.data = data
-
-    async def check(self, callback_query: CallbackQuery):
-        return callback_query.data == self.data
+if not os.path.exists('dbs'):
+    os.mkdir('dbs')
 
 
 # Инициализация бота и диспетчера
@@ -242,7 +150,7 @@ dispatcher = Dispatcher(bot, storage=storage)
 
 async def anti_flood(*args, **kwargs):
     m = args[0]
-    user_id = str(args[0]).split('"id":')[1].split(', "is_bot"')[0]
+    user_id = str(m.from_user.id)
     logger.warning(f"Обнаружен спаммер: ID: {user_id}")
     await m.answer("Не спамьте, иначе вы будете заблокированы")
 
@@ -250,65 +158,36 @@ async def anti_flood(*args, **kwargs):
 loguru.logger.debug('Бот был запущен')
 
 
-# Создание класса с переменными, которые будут принимать значение сообщения пользователя
-class Form(StatesGroup):
-    block_id = State()
-    addr = State()
-    watch_addr = State()
-
-
-'''Inline-клавиатуры'''
-# Создание кнопок для основной клавиатуры
-button_last = InlineKeyboardButton('🔍 Последний блок', callback_data='last')
-button_exchange = InlineKeyboardButton('💰 Курс Биткоина', callback_data='exchange')
-button_block = InlineKeyboardButton('🔗 Информация о блоке', callback_data='block')
-button_balance = InlineKeyboardButton('💼 Биткоин кошелек', callback_data='balance')
-
-# Создание основной клавиатуры и внесение в нее кнопок
-start_menu = InlineKeyboardMarkup()
-start_menu.add(button_last)
-start_menu.add(button_exchange)
-start_menu.add(button_block)
-start_menu.add(button_balance)
-
-# Создание клавиатуры, для перенаправления в меню
-menu_keyboard = InlineKeyboardMarkup()
-menu_button_text = InlineKeyboardButton('◀️ В меню', callback_data='menu')
-menu_keyboard.add(menu_button_text)
-
-# Стикеры бота (вынесены для удобного редактирования)
-menu_sticker = 'CAACAgIAAxkBAAEHi25j2o75xyB-m8C3s4ITgCo7JWPEmQACph8AAv0RsEpbI3U8YSp1vy4E'
-last_sticker = 'CAACAgIAAxkBAAEHi4Nj2pISiR7ub3J2ZJoFKgpZLkCFagACKCkAAtjzqErya_sR6K2N4i4E'
-exchange_sticker = 'CAACAgIAAxkBAAEHi4Vj2pI1uvDP9bz6NoJuw0kX9rz7tQAC7i4AAu6RsEpU_iAgu_9-aS4E'
-block_sticker = 'CAACAgIAAxkBAAEHi4lj2pJS89tE80V_ZHZuAc2G046hYAACGSsAAgREqErosNZKKuXTDC4E'
-balance_sticker = 'CAACAgIAAxkBAAEHi5Zj2pUrlw0OKm70CCTKPpUB9KqN9gACVyUAAsoEqUp6NgKY6HXb-S4E'
-error_sticker = 'CAACAgIAAxkBAAEHi5Fj2pUO7WE5dh8RaOOAzL-5LslsIAACkCwAAvLrqUr7GbPrm5Xk9C4E'
-sub_sticker = 'CAACAgIAAxkBAAEHlDRj3WaudkWdYnI_-i9weZA5InsLWwACtSkAAnIHsEpATn7qYGoMBS4E'
-unsub_sticker = 'CAACAgIAAxkBAAEHlDZj3WbOv1Q5yN9stdn_z42jDyEQXwACkCwAAvLrqUr7GbPrm5Xk9C4E'
-
-# Переменная меню (вынесена для быстрого редактирования)
-menu = '''
-🔥 <b>Меню:</b>
-
-💰 <b>Курс Биткоина:</b> Получите актуальный курс Биткоина на Blockchain
-🔍 <b>Последний блок:</b> Получите информацию о последнем блоке в сети Биткоин, включая транзакции
-💼 <b>Биткоин кошелек:</b> Получите информацию о вашем Биткоин кошельке, включая баланс, общую сумму поступлений и выводов
-🔗 <b>Информация о блоке:</b> Получите информацию о конкретном блоке по его номеру
-'''
-
-
 @logger.catch
 @dispatcher.message_handler(commands='start')
 @dispatcher.throttled(anti_flood, rate=3)
 async def start_handler(message: types.Message):
     """Хэндлер команды /start"""
+    create_users_table()
     chat_id = message.chat.id
     user_id = message.from_user.id
     full_name = message.from_user.full_name
     username = message.from_user.username
     message_id = message.message_id
     await bot.delete_message(chat_id=chat_id, message_id=message_id)
-    loguru.logger.info(f"Введена команда /start пользователем. Имя: {full_name}, ID: {user_id}, юзернейм: {username}")
+    
+    # Проверяем, есть ли пользователь в базе данных
+    conn = sqlite3.connect('dbs/users.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM users WHERE chat_id = ?', (chat_id,))
+    data = cursor.fetchone()
+    
+    if data is None:
+        # Если пользователь не найден, записываем его в базу данных и выводим уведомление
+        cursor.execute('INSERT INTO users VALUES (?)', (chat_id,))
+        conn.commit()
+        logger.info(f"Новый пользователь: {full_name}, ID: {user_id}, юзернейм: {username}")
+    else:
+        # Если пользователь уже есть в базе данных, выводим уведомление о введении команды
+        logger.info(f"Введена команда /start пользователем. Имя: {full_name}, ID: {user_id}, юзернейм: {username}")
+    
+    conn.close()
+    
     await bot.send_sticker(chat_id=chat_id,
                            sticker=menu_sticker)
     await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
@@ -398,6 +277,7 @@ async def block_handler(message: types.Message, state: FSMContext):
 
 
 @dispatcher.message_handler(state=Form.block_id)
+@dispatcher.throttled(anti_flood, rate=3)
 async def process_block_id(message: types.Message, state: FSMContext):
     """
     Обработка ID Блока
@@ -467,6 +347,7 @@ async def balance_handler(message: types.Message):
 
 
 @dispatcher.message_handler(state=Form.addr)
+@dispatcher.throttled(anti_flood, rate=3)
 async def process_addr(message: types.Message, state: FSMContext):
     """
     Обработка BTC адресса
@@ -496,7 +377,7 @@ async def process_addr(message: types.Message, state: FSMContext):
 @dispatcher.message_handler(Text(equals='отмена', ignore_case=True), state='*')
 async def cancel_handler(message: types.Message, state: FSMContext):
     """Закрытие state в случае ввода /cancel"""
-    loguru.logger.info(f"Ожидание ввода данных прервано командой /cancel")
+    loguru.logger.info("Ожидание ввода данных прервано командой /cancel")
     current_state = await state.get_state()
     if current_state is None:
         return
@@ -506,9 +387,10 @@ async def cancel_handler(message: types.Message, state: FSMContext):
 
 
 @dispatcher.callback_query_handler(CallbackDataFilter(data='last'))
+@dispatcher.throttled(anti_flood, rate=10)
 async def process_callback_last(callback_query: CallbackQuery):
     """Хэндлер команды /last"""
-    loguru.logger.info(f"Нажата кнопка последнего блока пользователем")
+    loguru.logger.info("Нажата кнопка последнего блока пользователем")
     chat_id = callback_query.message.chat.id
     await bot.send_sticker(chat_id=chat_id,
                            sticker=last_sticker)
@@ -523,9 +405,10 @@ async def process_callback_last(callback_query: CallbackQuery):
 
 
 @dispatcher.callback_query_handler(CallbackDataFilter(data='exchange'))
+@dispatcher.throttled(anti_flood, rate=10)
 async def process_callback_exchange(callback_query: CallbackQuery):
     """CallbackDataFilter кнопки exchange"""
-    loguru.logger.info(f"Нажата кнопка курс BTC пользователем")
+    loguru.logger.info("Нажата кнопка курс BTC пользователем")
     chat_id = callback_query.message.chat.id
     user_id = callback_query.message.from_user.id
     await bot.send_sticker(chat_id=chat_id,
@@ -536,9 +419,10 @@ async def process_callback_exchange(callback_query: CallbackQuery):
 
 
 @dispatcher.callback_query_handler(CallbackDataFilter(data='block'))
+@dispatcher.throttled(anti_flood, rate=10)
 async def process_callback_block(callback_query: CallbackQuery):
     """CallbackDataFilter кнопки block"""
-    loguru.logger.info(f"Нажата кнопка блок пользователем")
+    loguru.logger.info("Нажата кнопка блок пользователем")
     chat_id = callback_query.message.chat.id
     global msgg_id, stick_id, stickwel_id
     stick_id = (await bot.send_sticker(chat_id=chat_id,
@@ -550,9 +434,10 @@ async def process_callback_block(callback_query: CallbackQuery):
 
 
 @dispatcher.callback_query_handler(CallbackDataFilter(data='balance'))
+@dispatcher.throttled(anti_flood, rate=10)
 async def process_callback_balance(callback_query: CallbackQuery):
     """CallbackDataFilter кнопки balance"""
-    loguru.logger.info(f"Нажата кнопка баланс пользователем")
+    loguru.logger.info("Нажата кнопка баланс пользователем")
     chat_id = callback_query.message.chat.id
     msg_id = callback_query.message.message_id
     global command
@@ -567,10 +452,11 @@ async def process_callback_balance(callback_query: CallbackQuery):
 
 
 @dispatcher.callback_query_handler(CallbackDataFilter(data='menu'))
+@dispatcher.throttled(anti_flood, rate=10)
 async def process_callback_menu(callback_query: CallbackQuery):
     """CallbackDataFilter кнопки меню"""
     chat_id = callback_query.message.chat.id
-    loguru.logger.info(f"Нажата кнопка меню пользователем")
+    loguru.logger.info("Нажата кнопка меню пользователем")
     await bot.send_sticker(chat_id=chat_id, sticker=menu_sticker)
     await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
     await bot.send_message(chat_id=chat_id, text=menu, parse_mode='HTML', reply_markup=start_menu)
@@ -594,7 +480,7 @@ async def subscribe_handler(message: types.Message):
         await bot.send_message(chat_id=chat_id, text='❌ Подписка уже оформлена', parse_mode='HTML',
                                reply_markup=menu_keyboard)
     else:
-        conn = sqlite3.connect('subscribers.db')  # подключение к базе данных
+        conn = sqlite3.connect('dbs/subscribers.db')  # подключение к базе данных
         c = conn.cursor()
 
         c.execute('CREATE TABLE IF NOT EXISTS subscribers (chat_id INTEGER)')  # создание таблицы
@@ -623,7 +509,7 @@ async def unsubscribe_handler(message: types.Message):
     loguru.logger.info(
         f"Введена команда /unsubscribe пользователем. Имя: {full_name}, ID: {user_id}, юзернейм: {username}")
     if is_in_db(chat_id):
-        conn = sqlite3.connect('subscribers.db')
+        conn = sqlite3.connect('dbs/subscribers.db')
         c = conn.cursor()
 
         c.execute("DELETE FROM subscribers WHERE chat_id=?", (chat_id,))
@@ -663,6 +549,7 @@ async def watch_handler(message: types.Message):
 
 
 @dispatcher.message_handler(state=Form.watch_addr)
+@dispatcher.throttled(anti_flood, rate=3)
 async def process_watch(message: types.Message, state: FSMContext):
     """
     Обработка адресса для отслеживания
@@ -684,7 +571,7 @@ async def process_watch(message: types.Message, state: FSMContext):
         await bot.send_message(chat_id=chat_id, text='❌ Подписка уже оформлена', parse_mode='HTML',
                                reply_markup=menu_keyboard)
     else:
-        conn = sqlite3.connect('subscribers.db')  # подключение к базе данных
+        conn = sqlite3.connect('dbs/subscribers.db')  # подключение к базе данных
         c = conn.cursor()
 
         c.execute('CREATE TABLE IF NOT EXISTS wallet_watcher (chat_id INTEGER, wallet TEXT, balance TEXT)')  # создание таблицы
@@ -715,7 +602,7 @@ async def watch_handler(message: types.Message):
     loguru.logger.info(
         f"Введена команда /unwatch пользователем. Имя: {full_name}, ID: {user_id}, юзернейм: {username}")
     if wallet_in_db(chat_id):
-        conn = sqlite3.connect('subscribers.db')
+        conn = sqlite3.connect('dbs/subscribers.db')
         c = conn.cursor()
 
         c.execute("DELETE FROM wallet_watcher WHERE chat_id=?", (chat_id,))
@@ -731,6 +618,86 @@ async def watch_handler(message: types.Message):
         await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
         await bot.send_message(chat_id=chat_id, text='❌ Вы еще не оформляли подписку', parse_mode='HTML',
                                reply_markup=menu_keyboard)
+        
+
+# хендлер команды /admin
+@dispatcher.message_handler(commands=['admin'])
+@dispatcher.throttled(anti_flood, rate=3)
+async def admin_menu_handler(message: types.Message):
+    # Подключаемся к базе данных
+    conn = sqlite3.connect('dbs/users.db')
+    cursor = conn.cursor()
+
+    # Создаем таблицу, если ее нет
+    cursor.execute('''CREATE TABLE IF NOT EXISTS users
+                      (chat_id INTEGER PRIMARY KEY)''')
+    conn.commit()
+    conn.close()
+    await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
+    # проверяем, является ли пользователь администратором
+    if message.from_user.id not in ADMIN_IDS:
+        await bot.send_sticker(message.chat.id, error_sticker)
+        await message.answer("❌ Извините, вы не являетесь администратором.")
+        return
+
+    # отправляем сообщение с инлайн клавиатурой
+    await bot.send_sticker(message.chat.id, sub_sticker)
+    await message.answer("🛠️ Выберите действие:", reply_markup=admin_inline)
+
+
+# хендлер для обработки выбора инлайн кнопки
+@dispatcher.callback_query_handler(text=['broadcast', 'stats'])
+@dispatcher.throttled(anti_flood, rate=10)
+async def admin_inline_callback_handler(query: types.CallbackQuery, state: FSMContext):
+    if query.data == 'broadcast':
+        await bot.answer_callback_query(query.id)
+        await bot.send_sticker(query.message.chat.id, waiting_sticker)
+        await query.message.answer("💌 Введите текст для рассылки (Имеется поддержка HTML разметки):")
+        await BroadcastMessage.Text.set()
+    elif query.data == 'stats':
+        await bot.answer_callback_query(query.id)
+        users_count = get_users_count() # функция для получения количества юзеров
+        await bot.send_sticker(query.message.chat.id, waiting_sticker)
+        await query.message.answer(f"👥 Количество пользователей: {users_count}")
+
+# функция для отправки сообщения всем юзерам бота
+async def broadcast_message(text: str, media: List = None):
+    users = get_all_users() # функция для получения всех юзеров бота
+    for user in users:
+        chat_id = user
+        try:
+            if media:
+                if isinstance(media, list) and all(isinstance(item, tuple) for item in media):
+                    # отправляем медиафайлы вместе с сообщением
+                    await bot.send_media_group(chat_id=chat_id, media=media, parse_mode='HTML')
+                else:
+                    logger.error(f"Некорректный список медиафайлов для отправки: {media}")
+            if text:
+                await bot.send_message(chat_id=chat_id, text=text, parse_mode='HTML')
+        except Exception as e:
+            logger.error(f"Ошибка при отправке сообщения пользователю {chat_id}: {e}")
+            await asyncio.sleep(0.5)
+
+
+# хендлер для получения текста сообщения для рассылки
+@dispatcher.message_handler(state=BroadcastMessage.Text)
+@dispatcher.throttled(anti_flood, rate=3)
+async def broadcast_text_handler(message: types.Message, state: FSMContext):
+    text = message.text
+    media = []
+    if message.photo:
+        media = message.photo
+    elif message.video:
+        media = message.video
+    try:
+        await broadcast_message(text, media)
+        await state.finish()
+        await bot.send_sticker(message.chat.id, sub_sticker)
+        await message.answer("✅ Рассылка завершена")
+    except Exception as e:
+        logger.error(f"Ошибка при рассылке сообщения: {e}")
+        await message.answer("❌ Произошла ошибка при рассылке сообщения.")
+
 
 
 if __name__ == '__main__':
