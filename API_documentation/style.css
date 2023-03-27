@@ -1,0 +1,61 @@
+body{
+    position: relative;
+    margin: 0;  
+    font-family: 'Open Sans', sans-serif;  
+}
+.container{
+    margin: 0 116px;
+    color:white;
+}
+.header{
+    height: 300vh;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url(https://tailwindcss.com/_next/static/media/hero-dark@90.dba36cdf.jpg);
+}
+.header-line{
+    padding-top: 20px;
+}
+.header-text{
+    padding-top: 100px;
+    text-align: center;
+}
+.header-text h1{
+    font-weight: 800;
+    font-size: 80px;
+}
+.header-text h2{
+    font-weight: 500;
+    font-size: 30px;
+}
+.ddcrypto{
+    text-decoration: none;
+    cursor: pointer;
+    color:rgb(50, 164, 218)
+}
+.ddcrypto:hover{
+    text-decoration: underline;
+    -webkit-transform: scale(1.2);
+    -ms-transform: scale(1.2);
+    transform: scale(1.2);
+}
+.main{
+    margin-top: 200px;
+    text-align: center;
+    font-size: 50px;
+    font-weight: 800;
+    padding-right:80px;
+}
+.footer-text{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    margin-left: 20px;
+}
+.block p{
+    font-size: 25px;
+    font-weight: 5;
+    margin-bottom: -25px;
+    text-align: center;
+}
+
